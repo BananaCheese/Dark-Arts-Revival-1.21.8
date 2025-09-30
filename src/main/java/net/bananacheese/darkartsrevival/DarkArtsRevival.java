@@ -1,5 +1,8 @@
 package net.bananacheese.darkartsrevival;
 
+import net.bananacheese.darkartsrevival.blocks.DABlocks;
+import net.bananacheese.darkartsrevival.blocks.entity.DABlockEntities;
+import net.bananacheese.darkartsrevival.commands.ReviveCommand;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -11,5 +14,8 @@ public class DarkArtsRevival implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+        DABlocks.registerModBlocks();
+        DABlockEntities.registerBlockEntities();
+        ReviveCommand.register();
     }
 }

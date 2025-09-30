@@ -1,0 +1,20 @@
+package net.bananacheese.darkartsrevival.blocks.entity;
+
+import net.bananacheese.darkartsrevival.DarkArtsRevival;
+import net.bananacheese.darkartsrevival.blocks.DABlocks;
+import net.bananacheese.darkartsrevival.blocks.entity.custom.AlterBlockEntity;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+
+public class DABlockEntities {
+    public static final BlockEntityType<AlterBlockEntity> ALTER_BE =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, Identifier.of(DarkArtsRevival.MOD_ID, "alter_be"),
+                    FabricBlockEntityTypeBuilder.create(AlterBlockEntity::new, DABlocks.ALTER_BLOCK).build(null));
+
+    public static void registerBlockEntities() {
+        DarkArtsRevival.LOGGER.info("Registering Block Entities for " + DarkArtsRevival.MOD_ID);
+    }
+}

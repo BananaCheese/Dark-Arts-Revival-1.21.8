@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "minecraft:cobblestone",
+    "O": "minecraft:crying_obsidian"
+  },
+  "pattern": [
+    "COC",
+    "COC",
+    "CCC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "darkartsrevival:alter"
+  }
+}

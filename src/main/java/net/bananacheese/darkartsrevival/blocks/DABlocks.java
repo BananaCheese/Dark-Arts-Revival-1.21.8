@@ -15,7 +15,7 @@ import java.util.function.Function;
 
 public class DABlocks {
     public static final Block ALTER = registerBlock("alter",
-            properties -> new AlterBlock(properties.nonOpaque()));
+            properties -> new AlterBlock(properties.nonOpaque().strength(2, 6)));
 
     private static Block registerBlock(String name, Function<AbstractBlock.Settings, Block> function) {
         Block toRegister = function.apply(AbstractBlock.Settings.create().registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(DarkArtsRevival.MOD_ID, name))));

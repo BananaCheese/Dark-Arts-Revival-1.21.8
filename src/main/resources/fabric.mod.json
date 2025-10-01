@@ -5,13 +5,11 @@
 	"name": "Dark Arts Revival",
 	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
-		"Me!"
+		"BananaCheese"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/darkartsrevival/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -20,7 +18,10 @@
 		],
 		"fabric-datagen": [
 			"net.bananacheese.darkartsrevival.DarkArtsRevivalDataGenerator"
-		]
+		],
+        "client": [
+            "net.bananacheese.darkartsrevival.DarkArtsRevivalClient"
+        ]
 	},
 	"mixins": [
 		"darkartsrevival.mixins.json"

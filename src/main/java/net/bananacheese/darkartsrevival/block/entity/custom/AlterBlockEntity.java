@@ -1,7 +1,7 @@
-package net.bananacheese.darkartsrevival.blocks.entity.custom;
+package net.bananacheese.darkartsrevival.block.entity.custom;
 
-import net.bananacheese.darkartsrevival.blocks.entity.DABlockEntities;
-import net.bananacheese.darkartsrevival.blocks.entity.ImplementedInventory;
+import net.bananacheese.darkartsrevival.block.entity.DABlockEntities;
+import net.bananacheese.darkartsrevival.block.entity.ImplementedInventory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventories;

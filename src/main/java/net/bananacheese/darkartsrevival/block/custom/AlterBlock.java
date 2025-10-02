@@ -1,7 +1,7 @@
-package net.bananacheese.darkartsrevival.blocks.custom;
+package net.bananacheese.darkartsrevival.block.custom;
 
 import com.mojang.serialization.MapCodec;
-import net.bananacheese.darkartsrevival.blocks.entity.custom.AlterBlockEntity;
+import net.bananacheese.darkartsrevival.block.entity.custom.AlterBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,7 +10,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;

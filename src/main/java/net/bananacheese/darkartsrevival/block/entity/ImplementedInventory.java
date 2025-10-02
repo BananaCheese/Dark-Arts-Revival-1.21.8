@@ -1,4 +1,4 @@
-package net.bananacheese.darkartsrevival.blocks.entity;
+package net.bananacheese.darkartsrevival.block.entity;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;

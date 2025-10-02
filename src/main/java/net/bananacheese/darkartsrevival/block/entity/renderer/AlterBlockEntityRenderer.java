@@ -1,6 +1,6 @@
-package net.bananacheese.darkartsrevival.blocks.entity.renderer;
+package net.bananacheese.darkartsrevival.block.entity.renderer;
 
-import net.bananacheese.darkartsrevival.blocks.entity.custom.AlterBlockEntity;
+import net.bananacheese.darkartsrevival.block.entity.custom.AlterBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.OverlayTexture;

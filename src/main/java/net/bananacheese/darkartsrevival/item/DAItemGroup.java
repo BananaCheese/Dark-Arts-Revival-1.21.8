@@ -1,7 +1,7 @@
 package net.bananacheese.darkartsrevival.item;
 
 import net.bananacheese.darkartsrevival.DarkArtsRevival;
-import net.bananacheese.darkartsrevival.blocks.DABlocks;
+import net.bananacheese.darkartsrevival.block.DABlocks;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -18,6 +18,7 @@ public class DAItemGroup {
                     .entries((displayContext, entries) -> {
 
                         entries.add(DABlocks.ALTER);
+                        entries.add(DAItems.SOUL_SYRINGE);
 
                     }).build());
 

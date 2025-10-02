@@ -1,8 +1,8 @@
-package net.bananacheese.darkartsrevival.blocks.entity;
+package net.bananacheese.darkartsrevival.block.entity;
 
 import net.bananacheese.darkartsrevival.DarkArtsRevival;
-import net.bananacheese.darkartsrevival.blocks.DABlocks;
-import net.bananacheese.darkartsrevival.blocks.entity.custom.AlterBlockEntity;
+import net.bananacheese.darkartsrevival.block.DABlocks;
+import net.bananacheese.darkartsrevival.block.entity.custom.AlterBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;

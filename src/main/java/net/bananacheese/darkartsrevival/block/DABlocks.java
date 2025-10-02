@@ -1,7 +1,7 @@
-package net.bananacheese.darkartsrevival.blocks;
+package net.bananacheese.darkartsrevival.block;
 
 import net.bananacheese.darkartsrevival.DarkArtsRevival;
-import net.bananacheese.darkartsrevival.blocks.custom.AlterBlock;
+import net.bananacheese.darkartsrevival.block.custom.AlterBlock;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;

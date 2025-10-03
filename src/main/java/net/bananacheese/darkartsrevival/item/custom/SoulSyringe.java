@@ -1,19 +1,16 @@
 package net.bananacheese.darkartsrevival.item.custom;
 
-import net.bananacheese.darkartsrevival.DarkArtsRevival;
 import net.bananacheese.darkartsrevival.component.DAComponents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import java.util.List;
 
 public class SoulSyringe extends Item {
     private static final int MAX_FILL_LEVEL = 4;
@@ -37,20 +34,40 @@ public class SoulSyringe extends Item {
         super.postHit(stack, target, attacker);
     }
 
-    // Method 2 & 3: Right-clicking (sneak for slot 2, block for slot 3)
+    // Method 2, 3 & 4: Right-clicking (sneak for slot 2, offhand biomass for slot 4)
     @Override
     public ActionResult use(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
+        ItemStack offhandStack = player.getOffHandStack();
 
-        if (!world.isClient) {
+        if (!world.isClient && hand == Hand.MAIN_HAND) {
             int currentLevel = getFillLevel(stack);
 
-            // Sneak right-click fills slot 2
+            // Sneak right-click fills slot 2 (damages player)
             if (player.isSneaking()) {
                 if (currentLevel == 1) {
                     setFillLevel(stack, 2);
-                    player.sendMessage(Text.literal("Soul Syringe: Slot 2 filled (Essence)"), true);
+                    if (world instanceof net.minecraft.server.world.ServerWorld serverWorld) {
+                        player.damage(serverWorld, player.getDamageSources().magic(), 4.0F); //2 hearts of damage
+                    }
+                    player.sendMessage(Text.literal("Soul Syringe: Slot 2 filled (Living Soul)"), true);
                     return ActionResult.SUCCESS;
+                }
+            }
+
+            // Right-click with biomass in offhand fills slot 4
+            if (currentLevel == 3 && !offhandStack.isEmpty()) {
+                BiomassType biomassType = getBiomassType(offhandStack);
+                int required = biomassType.getRequiredAmount();
+
+                if (biomassType != BiomassType.NONE && offhandStack.getCount() >= required) {
+                    offhandStack.decrement(required);
+                    setFillLevel(stack, 4);
+                    player.sendMessage(Text.literal("Soul Syringe: Slot 4 filled (Biomass)"), true);
+                    return ActionResult.SUCCESS;
+                } else if (biomassType != BiomassType.NONE) {
+                    player.sendMessage(Text.literal("§cNeed " + required + " " + offhandStack.getName().getString()), true);
+                    return ActionResult.FAIL;
                 }
             }
         }
@@ -75,7 +92,7 @@ public class SoulSyringe extends Item {
             if (world.getBlockState(pos).isSolidBlock(world, pos)) {
                 if (currentLevel == 2) {
                     setFillLevel(stack, 3);
-                    player.sendMessage(Text.literal("Soul Syringe: Slot 3 filled (Environmental)"), true);
+                    player.sendMessage(Text.literal("Soul Syringe: Slot 3 filled (Dead Soul)"), true);
                     return ActionResult.SUCCESS;
                 }
             }
@@ -93,25 +110,47 @@ public class SoulSyringe extends Item {
         stack.set(DAComponents.SYRINGE_FILL_LEVEL, Math.min(level, MAX_FILL_LEVEL));
     }
 
-    // Tooltip to show fill level
-    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
-        DarkArtsRevival.LOGGER.info("Tooltip called! Fill level: " + getFillLevel(stack));
-        int fillLevel = getFillLevel(stack);
-        tooltip.add(Text.literal("Fill Level: " + fillLevel + "/" + MAX_FILL_LEVEL));
+    // Biomass checking
+    private static BiomassType getBiomassType(ItemStack stack) {
+        // Meat items (32 required)
+        if (stack.isOf(Items.BEEF) || stack.isOf(Items.COOKED_BEEF) ||
+                stack.isOf(Items.PORKCHOP) || stack.isOf(Items.COOKED_PORKCHOP) ||
+                stack.isOf(Items.MUTTON) || stack.isOf(Items.COOKED_MUTTON) ||
+                stack.isOf(Items.CHICKEN) || stack.isOf(Items.COOKED_CHICKEN) ||
+                stack.isOf(Items.RABBIT) || stack.isOf(Items.COOKED_RABBIT) ||
+                stack.isOf(Items.COD) || stack.isOf(Items.COOKED_COD) ||
+                stack.isOf(Items.SALMON) || stack.isOf(Items.COOKED_SALMON) ||
+                stack.isOf(Items.ROTTEN_FLESH)) {
+            return BiomassType.MEAT;
+        }
 
-        if (fillLevel < MAX_FILL_LEVEL) {
-            tooltip.add(Text.literal(""));
-            if (fillLevel == 0) {
-                tooltip.add(Text.literal("§7• Hit a mob to fill slot 1"));
-            } else if (fillLevel == 1) {
-                tooltip.add(Text.literal("§7• Sneak + Right-click to fill slot 2"));
-            } else if (fillLevel == 2) {
-                tooltip.add(Text.literal("§7• Right-click a block to fill slot 3"));
-            } else if (fillLevel == 3) {
-                tooltip.add(Text.literal("§7• Craft with biomass to fill slot 4"));
-            }
-        } else {
-            tooltip.add(Text.literal("§aFully Charged!"));
+        // Plant matter (64 required)
+        if (stack.isOf(Items.WHEAT) || stack.isOf(Items.WHEAT_SEEDS) ||
+                stack.isOf(Items.CARROT) || stack.isOf(Items.POTATO) ||
+                stack.isOf(Items.BEETROOT) || stack.isOf(Items.BEETROOT_SEEDS) ||
+                stack.isOf(Items.APPLE) || stack.isOf(Items.MELON_SLICE) ||
+                stack.isOf(Items.PUMPKIN) || stack.isOf(Items.KELP) ||
+                stack.isOf(Items.SWEET_BERRIES)) {
+            return BiomassType.PLANT;
+        }
+
+        return BiomassType.NONE;
+    }
+
+    // Enum for biomass types
+    private enum BiomassType {
+        MEAT(32),
+        PLANT(64),
+        NONE(0);
+
+        private final int required;
+
+        BiomassType(int required) {
+            this.required = required;
+        }
+
+        public int getRequiredAmount() {
+            return required;
         }
     }
 }

@@ -56,6 +56,15 @@ public class AlterBlock extends BlockWithEntity implements BlockEntityProvider {
         // Check for Soul Syringe ritual first (server-side only)
         if (!world.isClient && stack.getItem() instanceof SoulSyringe) {
             boolean success = RevivalRitual.performRitual((ServerWorld) world, pos, player, stack);
+            if (success) {
+                // Sync the altar after ritual (syringe consumed)
+                if (world.getBlockEntity(pos) instanceof AlterBlockEntity alterBlockEntity) {
+                    alterBlockEntity.markDirty();
+                    world.updateListeners(pos, state, state, Block.NOTIFY_ALL);
+                    // Send update packet to clients
+                    ((ServerWorld) world).getChunkManager().markForUpdate(pos);
+                }
+            }
             return success ? ActionResult.SUCCESS : ActionResult.FAIL;
         }
 
@@ -67,7 +76,10 @@ public class AlterBlock extends BlockWithEntity implements BlockEntityProvider {
                 stack.decrement(1);
 
                 alterBlockEntity.markDirty();
-                world.updateListeners(pos, state, state, 0);
+                if (!world.isClient) {
+                    world.updateListeners(pos, state, state, Block.NOTIFY_ALL);
+                    ((ServerWorld) world).getChunkManager().markForUpdate(pos);
+                }
             } else if(stack.isEmpty() && !player.isSneaking()) {
                 ItemStack stackOnPedestal = alterBlockEntity.getStack(0);
                 player.setStackInHand(Hand.MAIN_HAND, stackOnPedestal);
@@ -75,7 +87,10 @@ public class AlterBlock extends BlockWithEntity implements BlockEntityProvider {
                 alterBlockEntity.clear();
 
                 alterBlockEntity.markDirty();
-                world.updateListeners(pos, state, state, 0);
+                if (!world.isClient) {
+                    world.updateListeners(pos, state, state, Block.NOTIFY_ALL);
+                    ((ServerWorld) world).getChunkManager().markForUpdate(pos);
+                }
             }
         }
 

@@ -13,20 +13,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * A simple {@code SidedInventory} implementation with only default methods + an item list getter.
- *
- * <h2>Reading and writing to tags</h2>
- * Use {@link Inventories#writeNbt(NbtCompound, DefaultedList, RegistryWrapper.WrapperLookup)} and
- * {@link Inventories#readNbt(NbtCompound, DefaultedList, RegistryWrapper.WrapperLookup)}
- * on {@linkplain #getItems() the item list}.
- *
- * License: <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>
- * @author Juuz
- */
+   /*
+    *A simple {@code SidedInventory} implementation with only default methods + an item list getter.
+    *
+    *<h2>Reading and writing to tags</h2>
+    *Use {@link Inventories#writeNbt(NbtCompound, DefaultedList, RegistryWrapper.WrapperLookup)} and
+    *{@link Inventories#readNbt(NbtCompound, DefaultedList, RegistryWrapper.WrapperLookup)}
+    *on {@linkplain #getItems() the item list}.
+    *
+    *License: <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>
+    *@author Juuz
+    */
+
 @FunctionalInterface
 public interface ImplementedInventory extends SidedInventory {
-    /**
+    /*
      * Gets the item list of this inventory.
      * Must return the same instance every time it's called.
      *
@@ -34,7 +35,7 @@ public interface ImplementedInventory extends SidedInventory {
      */
     DefaultedList<ItemStack> getItems();
 
-    /**
+    /*
      * Creates an inventory from the item list.
      *
      * @param items the item list
@@ -44,7 +45,7 @@ public interface ImplementedInventory extends SidedInventory {
         return () -> items;
     }
 
-    /**
+    /*
      * Creates a new inventory with the size.
      *
      * @param size the inventory size
@@ -56,7 +57,7 @@ public interface ImplementedInventory extends SidedInventory {
 
     // SidedInventory
 
-    /**
+    /*
      * Gets the available slots to automation on the side.
      *
      * <p>The default implementation returns an array of all slots.
@@ -74,7 +75,7 @@ public interface ImplementedInventory extends SidedInventory {
         return result;
     }
 
-    /**
+    /*
      * Returns true if the stack can be inserted in the slot at the side.
      *
      * <p>The default implementation returns true.
@@ -89,7 +90,7 @@ public interface ImplementedInventory extends SidedInventory {
         return true;
     }
 
-    /**
+    /*
      * Returns true if the stack can be extracted from the slot at the side.
      *
      * <p>The default implementation returns true.
@@ -106,7 +107,7 @@ public interface ImplementedInventory extends SidedInventory {
 
     // Inventory
 
-    /**
+    /*
      * Returns the inventory size.
      *
      * <p>The default implementation returns the size of {@link #getItems()}.
@@ -118,7 +119,7 @@ public interface ImplementedInventory extends SidedInventory {
         return getItems().size();
     }
 
-    /**
+    /*
      * @return true if this inventory has only empty stacks, false otherwise
      */
     @Override
@@ -133,7 +134,7 @@ public interface ImplementedInventory extends SidedInventory {
         return true;
     }
 
-    /**
+    /*
      * Gets the item in the slot.
      *
      * @param slot the slot
@@ -144,7 +145,7 @@ public interface ImplementedInventory extends SidedInventory {
         return getItems().get(slot);
     }
 
-    /**
+    /*
      * Takes a stack of the size from the slot.
      *
      * <p>(default implementation) If there are less items in the slot than what are requested,
@@ -164,7 +165,7 @@ public interface ImplementedInventory extends SidedInventory {
         return result;
     }
 
-    /**
+    /*
      * Removes the current stack in the {@code slot} and returns it.
      *
      * <p>The default implementation uses {@link Inventories#removeStack(List, int)}
@@ -177,7 +178,7 @@ public interface ImplementedInventory extends SidedInventory {
         return Inventories.removeStack(getItems(), slot);
     }
 
-    /**
+    /*
      * Replaces the current stack in the {@code slot} with the provided stack.
      *
      * <p>If the stack is too big for this inventory ({@link Inventory#getMaxCountPerStack()}),
@@ -194,7 +195,7 @@ public interface ImplementedInventory extends SidedInventory {
         }
     }
 
-    /**
+    /*
      * Clears {@linkplain #getItems() the item list}}.
      */
     @Override

@@ -35,11 +35,10 @@ public class DarkArtsRevival implements ModInitializer {
                 int fillLevel = SoulSyringe.getFillLevel(stack);
                 lines.add(Text.literal("Fill Level: " + fillLevel + "/4"));
 
-                // Show target player if set
-                java.util.UUID targetUuid = SoulSyringe.getTargetPlayer(stack);
-                if (targetUuid != null) {
-                    String playerName = getPlayerName(tooltipContext, targetUuid);
-                    lines.add(Text.literal("§6Target: " + playerName));
+                // Show target player name if set
+                String targetName = SoulSyringe.getTargetName(stack);
+                if (targetName != null) {
+                    lines.add(Text.literal("§6Target: " + targetName));
                 }
 
                 if (fillLevel < 4) {

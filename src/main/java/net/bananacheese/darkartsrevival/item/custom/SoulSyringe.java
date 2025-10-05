@@ -97,13 +97,14 @@ public class SoulSyringe extends Item {
                         java.util.UUID targetUuid = ownerProfile.uuid().get();
                         String targetName = ownerProfile.name().orElse("Unknown");
 
-                        // Store the target player UUID
+                        // Store the target player UUID and name
                         setTargetPlayer(stack, targetUuid);
+                        setTargetName(stack, targetName);
                         setFillLevel(stack, 3);
 
                         player.sendMessage(Text.literal("Soul Syringe: Slot 3 filled (Target: " + targetName + ")"), true);
 
-                        // Optionally remove the head block
+                        // Remove the head block
                         world.removeBlock(pos, false);
 
                         return ActionResult.SUCCESS;
@@ -133,6 +134,14 @@ public class SoulSyringe extends Item {
 
     public static void setTargetPlayer(ItemStack stack, java.util.UUID uuid) {
         stack.set(DAComponents.SYRINGE_TARGET_PLAYER, uuid);
+    }
+
+    public static String getTargetName(ItemStack stack) {
+        return stack.get(DAComponents.SYRINGE_TARGET_NAME);
+    }
+
+    public static void setTargetName(ItemStack stack, String name) {
+        stack.set(DAComponents.SYRINGE_TARGET_NAME, name);
     }
 
     // Biomass checking

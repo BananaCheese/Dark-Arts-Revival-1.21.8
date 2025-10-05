@@ -31,6 +31,15 @@ public class DAComponents {
                     .build()
     );
 
+    public static final ComponentType<String> SYRINGE_TARGET_NAME = Registry.register(
+            Registries.DATA_COMPONENT_TYPE,
+            Identifier.of(DarkArtsRevival.MOD_ID, "syringe_target_name"),
+            ComponentType.<String>builder()
+                    .codec(Codec.STRING)
+                    .packetCodec(PacketCodecs.STRING)
+                    .build()
+    );
+
     public static void registerComponents() {
         DarkArtsRevival.LOGGER.info("Registering Data Components for " + DarkArtsRevival.MOD_ID);
     }

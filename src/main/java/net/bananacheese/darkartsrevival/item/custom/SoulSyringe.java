@@ -47,10 +47,11 @@ public class SoulSyringe extends Item {
             if (player.isSneaking()) {
                 if (currentLevel == 1) {
                     setFillLevel(stack, 2);
+                    // Damage player (1 heart) - need to cast World to ServerWorld
                     if (world instanceof net.minecraft.server.world.ServerWorld serverWorld) {
-                        player.damage(serverWorld, player.getDamageSources().magic(), 4.0F); //2 hearts of damage
+                        player.damage(serverWorld, player.getDamageSources().magic(), 2.0F);
                     }
-                    player.sendMessage(Text.literal("Soul Syringe: Slot 2 filled (Living Soul)"), true);
+                    player.sendMessage(Text.literal("Soul Syringe: Slot 2 filled (Essence)"), true);
                     return ActionResult.SUCCESS;
                 }
             }
@@ -75,7 +76,7 @@ public class SoulSyringe extends Item {
         return ActionResult.PASS;
     }
 
-    // Method 3: Right-clicking a specific block
+    // Method 3: Right-clicking a player head to capture target
     @Override
     public ActionResult useOnBlock(net.minecraft.item.ItemUsageContext context) {
         World world = context.getWorld();
@@ -86,14 +87,30 @@ public class SoulSyringe extends Item {
         if (!world.isClient && player != null) {
             int currentLevel = getFillLevel(stack);
 
-            // Check if the block is your target block (change this to your desired block)
-            // Example: if (world.getBlockState(pos).isOf(Blocks.SOUL_SAND)) {
-            // For now, using any solid block as example - CHANGE THIS
-            if (world.getBlockState(pos).isSolidBlock(world, pos)) {
-                if (currentLevel == 2) {
-                    setFillLevel(stack, 3);
-                    player.sendMessage(Text.literal("Soul Syringe: Slot 3 filled (Dead Soul)"), true);
-                    return ActionResult.SUCCESS;
+            // Check if it's a player head at level 2
+            if (currentLevel == 2 && world.getBlockState(pos).getBlock() instanceof net.minecraft.block.PlayerSkullBlock) {
+                // Get the skull block entity to read the player profile
+                if (world.getBlockEntity(pos) instanceof net.minecraft.block.entity.SkullBlockEntity skullEntity) {
+                    var ownerProfile = skullEntity.getOwner();
+
+                    if (ownerProfile != null && ownerProfile.uuid().isPresent()) {
+                        java.util.UUID targetUuid = ownerProfile.uuid().get();
+                        String targetName = ownerProfile.name().orElse("Unknown");
+
+                        // Store the target player UUID
+                        setTargetPlayer(stack, targetUuid);
+                        setFillLevel(stack, 3);
+
+                        player.sendMessage(Text.literal("Soul Syringe: Slot 3 filled (Target: " + targetName + ")"), true);
+
+                        // Optionally remove the head block
+                        world.removeBlock(pos, false);
+
+                        return ActionResult.SUCCESS;
+                    } else {
+                        player.sendMessage(Text.literal("§cThis head has no owner data!"), true);
+                        return ActionResult.FAIL;
+                    }
                 }
             }
         }
@@ -108,6 +125,14 @@ public class SoulSyringe extends Item {
 
     public static void setFillLevel(ItemStack stack, int level) {
         stack.set(DAComponents.SYRINGE_FILL_LEVEL, Math.min(level, MAX_FILL_LEVEL));
+    }
+
+    public static java.util.UUID getTargetPlayer(ItemStack stack) {
+        return stack.get(DAComponents.SYRINGE_TARGET_PLAYER);
+    }
+
+    public static void setTargetPlayer(ItemStack stack, java.util.UUID uuid) {
+        stack.set(DAComponents.SYRINGE_TARGET_PLAYER, uuid);
     }
 
     // Biomass checking

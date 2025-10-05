@@ -7,6 +7,9 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Uuids;
+
+import java.util.UUID;
 
 public class DAComponents {
 
@@ -16,6 +19,15 @@ public class DAComponents {
             ComponentType.<Integer>builder()
                     .codec(Codec.INT)
                     .packetCodec(PacketCodecs.VAR_INT)
+                    .build()
+    );
+
+    public static final ComponentType<UUID> SYRINGE_TARGET_PLAYER = Registry.register(
+            Registries.DATA_COMPONENT_TYPE,
+            Identifier.of(DarkArtsRevival.MOD_ID, "syringe_target_player"),
+            ComponentType.<UUID>builder()
+                    .codec(Uuids.CODEC)
+                    .packetCodec(Uuids.PACKET_CODEC)
                     .build()
     );
 

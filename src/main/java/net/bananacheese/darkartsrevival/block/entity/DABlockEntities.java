@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 public class DABlockEntities {
     public static final BlockEntityType<AlterBlockEntity> ALTER_BE =
             Registry.register(Registries.BLOCK_ENTITY_TYPE, Identifier.of(DarkArtsRevival.MOD_ID, "alter_be"),
-                    FabricBlockEntityTypeBuilder.create(AlterBlockEntity::new, DABlocks.ALTER).build(null));
+                    FabricBlockEntityTypeBuilder.create(AlterBlockEntity::new, DABlocks.ALTER).build());
 
     public static void registerBlockEntities() {
         DarkArtsRevival.LOGGER.info("Registering Block Entities for " + DarkArtsRevival.MOD_ID);

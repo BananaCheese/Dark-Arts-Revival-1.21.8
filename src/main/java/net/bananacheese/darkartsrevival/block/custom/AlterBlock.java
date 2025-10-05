@@ -2,10 +2,13 @@ package net.bananacheese.darkartsrevival.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import net.bananacheese.darkartsrevival.block.entity.custom.AlterBlockEntity;
+import net.bananacheese.darkartsrevival.item.custom.SoulSyringe;
+import net.bananacheese.darkartsrevival.ritual.RevivalRitual;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
@@ -50,6 +53,13 @@ public class AlterBlock extends BlockWithEntity implements BlockEntityProvider {
     @Override
     protected ActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos,
                                          PlayerEntity player, Hand hand, BlockHitResult hit) {
+        // Check for Soul Syringe ritual first (server-side only)
+        if (!world.isClient && stack.getItem() instanceof SoulSyringe) {
+            boolean success = RevivalRitual.performRitual((ServerWorld) world, pos, player, stack);
+            return success ? ActionResult.SUCCESS : ActionResult.FAIL;
+        }
+
+        // Normal altar behavior (place/remove items)
         if(world.getBlockEntity(pos) instanceof AlterBlockEntity alterBlockEntity) {
             if(alterBlockEntity.isEmpty() && !stack.isEmpty()) {
                 alterBlockEntity.setStack(0, stack.copyWithCount(1));

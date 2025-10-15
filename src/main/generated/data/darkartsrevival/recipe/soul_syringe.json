@@ -7,8 +7,8 @@
     "X": "minecraft:glass_pane"
   },
   "pattern": [
-    " GX",
-    " IG",
+    " GI",
+    " XG",
     "I  "
   ],
   "result": {

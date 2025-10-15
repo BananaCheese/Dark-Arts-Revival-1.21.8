@@ -32,8 +32,8 @@ public class DARecipeProvider extends FabricRecipeProvider {
                         .offerTo(exporter);
 
                 createShaped(RecipeCategory.MISC, DAItems.SOUL_SYRINGE)
-                        .pattern(" GX")
-                        .pattern(" IG")
+                        .pattern(" GI")
+                        .pattern(" XG")
                         .pattern("I  ")
                         .input('G', Items.GOLD_INGOT).input('I', Items.IRON_INGOT).input('X', Items.GLASS_PANE)
                         .criterion(hasItem(Items.GLASS_PANE), conditionsFromItem(Items.GOLD_INGOT))

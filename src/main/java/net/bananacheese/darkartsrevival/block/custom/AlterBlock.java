@@ -55,7 +55,7 @@ public class AlterBlock extends BlockWithEntity implements BlockEntityProvider {
                                          PlayerEntity player, Hand hand, BlockHitResult hit) {
         // Check for Soul Syringe ritual first (server-side only)
         if (!world.isClient && stack.getItem() instanceof SoulSyringe) {
-            boolean success = RevivalRitual.performRitual((ServerWorld) world, pos, player, stack);
+            boolean success = RevivalRitual.performRevivalRitual((ServerWorld) world, pos, player, stack);
             if (success) {
                 // Sync the altar after ritual (syringe consumed)
                 if (world.getBlockEntity(pos) instanceof AlterBlockEntity alterBlockEntity) {

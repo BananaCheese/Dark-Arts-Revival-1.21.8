@@ -24,7 +24,7 @@ public class RevivalRitual {
      * @param syringeStack The soul syringe item stack
      * @return true if the ritual was successful
      */
-    public static boolean performRitual(ServerWorld world, BlockPos pos, PlayerEntity performer, ItemStack syringeStack) {
+    public static boolean performRevivalRitual(ServerWorld world, BlockPos pos, PlayerEntity performer, ItemStack syringeStack) {
         // Validate the syringe
         if (!(syringeStack.getItem() instanceof SoulSyringe)) {
             performer.sendMessage(Text.literal("§cYou need a Soul Syringe to perform this ritual!"), false);

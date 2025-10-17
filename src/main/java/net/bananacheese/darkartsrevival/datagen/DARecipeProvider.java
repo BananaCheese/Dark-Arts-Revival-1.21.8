@@ -31,6 +31,14 @@ public class DARecipeProvider extends FabricRecipeProvider {
                         .criterion(hasItem(Items.CRYING_OBSIDIAN), conditionsFromItem(Items.CRYING_OBSIDIAN))
                         .offerTo(exporter);
 
+                createShaped(RecipeCategory.MISC, DABlocks.PEDESTAL)
+                        .pattern("ORO")
+                        .pattern(" C ")
+                        .pattern("CCC")
+                        .input('C', Items.COBBLESTONE).input('O', Items.CRYING_OBSIDIAN).input('R', Items.RED_CARPET)
+                        .criterion(hasItem(Items.CRYING_OBSIDIAN), conditionsFromItem(Items.CRYING_OBSIDIAN))
+                        .offerTo(exporter);
+
                 createShaped(RecipeCategory.MISC, DAItems.SOUL_SYRINGE)
                         .pattern(" GI")
                         .pattern(" XG")

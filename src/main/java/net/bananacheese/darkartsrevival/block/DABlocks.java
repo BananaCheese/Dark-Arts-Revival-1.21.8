@@ -2,6 +2,7 @@ package net.bananacheese.darkartsrevival.block;
 
 import net.bananacheese.darkartsrevival.DarkArtsRevival;
 import net.bananacheese.darkartsrevival.block.custom.AlterBlock;
+import net.bananacheese.darkartsrevival.block.custom.PedestalBlock;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -16,6 +17,9 @@ import java.util.function.Function;
 public class DABlocks {
     public static final Block ALTER = registerBlock("alter",
             properties -> new AlterBlock(properties.nonOpaque().strength(2, 6)));
+
+    public static final Block PEDESTAL = registerBlock("pedestal",
+            properties -> new PedestalBlock(properties.nonOpaque().strength(2, 6)));
 
     private static Block registerBlock(String name, Function<AbstractBlock.Settings, Block> function) {
         Block toRegister = function.apply(AbstractBlock.Settings.create().registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(DarkArtsRevival.MOD_ID, name))));

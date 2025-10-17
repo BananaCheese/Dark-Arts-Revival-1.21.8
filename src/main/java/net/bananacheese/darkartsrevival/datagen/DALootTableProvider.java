@@ -15,5 +15,6 @@ public class DALootTableProvider extends FabricBlockLootTableProvider {
     @Override
     public void generate() {
         addDrop(DABlocks.ALTER);
+        addDrop(DABlocks.PEDESTAL);
     }
 }

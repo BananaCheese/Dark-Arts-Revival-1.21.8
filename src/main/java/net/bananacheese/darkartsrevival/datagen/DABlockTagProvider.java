@@ -16,6 +16,7 @@ public class DABlockTagProvider extends FabricTagProvider.BlockTagProvider {
     @Override
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
         valueLookupBuilder(BlockTags.PICKAXE_MINEABLE)
-                .add(DABlocks.ALTER);
+                .add(DABlocks.ALTER)
+                .add(DABlocks.PEDESTAL);
     }
 }

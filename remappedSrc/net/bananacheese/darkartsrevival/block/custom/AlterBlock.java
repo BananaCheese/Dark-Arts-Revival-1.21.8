@@ -21,7 +21,8 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class AlterBlock extends BlockWithEntity implements BlockEntityProvider {
-    private static final VoxelShape SHAPE = Block.createCuboidShape(2, 0, 2, 14, 13, 14);
+    private static final VoxelShape SHAPE =
+            Block.createCuboidShape(2, 0, 2, 14, 13, 14);
     public static final MapCodec<AlterBlock> CODEC = AlterBlock.createCodec(AlterBlock::new);
 
     public AlterBlock(Settings settings) {

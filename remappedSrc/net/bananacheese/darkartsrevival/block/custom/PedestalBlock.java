@@ -1,6 +1,5 @@
 package net.bananacheese.darkartsrevival.block.custom;
 
-import net.bananacheese.darkartsrevival.block.entity.custom.AlterBlockEntity;
 import net.bananacheese.darkartsrevival.block.entity.custom.PedestalBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -16,11 +15,14 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
 import org.jetbrains.annotations.Nullable;
 
 public class PedestalBlock extends BlockWithEntity implements BlockEntityProvider {
-    private static final VoxelShape SHAPE = Block.createCuboidShape(4, 0, 4, 12, 13, 12);
     public static final MapCodec<PedestalBlock> CODEC = PedestalBlock.createCodec(PedestalBlock::new);
+
+    // Pedestal is smaller than altar
+    private static final VoxelShape SHAPE = VoxelShapes.cuboid(0.25f, 0, 0.25f, 0.75f, 0.75f, 0.75f);
 
     public PedestalBlock(AbstractBlock.Settings settings) {
         super(settings);
@@ -46,6 +48,7 @@ public class PedestalBlock extends BlockWithEntity implements BlockEntityProvide
     protected BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.MODEL;
     }
+
     @Override
     protected ActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos,
                                          PlayerEntity player, Hand hand, BlockHitResult hit) {

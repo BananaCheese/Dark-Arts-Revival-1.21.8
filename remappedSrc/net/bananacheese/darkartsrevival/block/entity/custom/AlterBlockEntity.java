@@ -23,9 +23,6 @@ public class AlterBlockEntity extends BlockEntity implements ImplementedInventor
     private float rotation = 0;
     private int fluidStored = 0;
     private static final int MAX_FLUID = 1000;
-    private int creationTicks = 0;
-    private static final int CREATION_DURATION = 60; // 3 seconds at 20 ticks/second
-    private ItemStack creatingItem = ItemStack.EMPTY; // Item being created
 
     public AlterBlockEntity(BlockPos pos, BlockState state) {
         super(DABlockEntities.ALTER_BE, pos, state);
@@ -70,7 +67,6 @@ public class AlterBlockEntity extends BlockEntity implements ImplementedInventor
         super.writeData(view);
         Inventories.writeData(view, inventory);
         view.putInt("FluidStored", fluidStored);
-        view.putInt("CreationTicks", creationTicks);
     }
 
     @Override
@@ -78,52 +74,6 @@ public class AlterBlockEntity extends BlockEntity implements ImplementedInventor
         super.readData(view);
         Inventories.readData(view, inventory);
         fluidStored = view.getInt("FluidStored", fluidStored);
-        creationTicks = view.getInt("CreationTicks", creationTicks);
-    }
-
-    public void clientTick() {
-        if (creationTicks > 0) {
-            creationTicks--;
-            spawnCreationParticles();
-
-            // When creation finishes, place the item
-            if (creationTicks == 0) {
-                setStack(0, creatingItem);
-                creatingItem = ItemStack.EMPTY;
-            }
-        }
-    }
-
-    private void spawnCreationParticles() {
-        if (world == null || !world.isClient) return;
-
-        double x = pos.getX() + 0.5;
-        double y = pos.getY() + 1.0;
-        double z = pos.getZ() + 0.5;
-
-        // Spiral particle effect
-        double angle = (CREATION_DURATION - creationTicks) * 0.1;
-        double radius = 0.5 + (creationTicks / (double) CREATION_DURATION) * 0.3;
-
-        double px = x + Math.cos(angle) * radius;
-        double pz = z + Math.sin(angle) * radius;
-
-        world.addParticleClient(net.minecraft.particle.ParticleTypes.ENCHANT, px, y, pz, 0, 0.1, 0);
-        world.addParticleClient(net.minecraft.particle.ParticleTypes.GLOW, px, y + 0.2, pz, 0, 0.05, 0);
-    }
-
-    public void startCreation(ItemStack itemToCreate) {
-        this.creatingItem = itemToCreate.copy();
-        this.creationTicks = CREATION_DURATION;
-        this.markDirty();
-    }
-
-    public int getCreationProgress() {
-        return CREATION_DURATION - creationTicks;
-    }
-
-    public boolean isCreating() {
-        return creationTicks > 0;
     }
 
     @Override

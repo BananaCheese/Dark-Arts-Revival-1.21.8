@@ -2,6 +2,8 @@ package net.bananacheese.darkartsrevival.block;
 
 import net.bananacheese.darkartsrevival.DarkArtsRevival;
 import net.bananacheese.darkartsrevival.block.custom.AlterBlock;
+import net.bananacheese.darkartsrevival.block.custom.BarrierFieldBlock;
+import net.bananacheese.darkartsrevival.block.custom.DarkBarrierBlock;
 import net.bananacheese.darkartsrevival.block.custom.PedestalBlock;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
@@ -20,6 +22,12 @@ public class DABlocks {
 
     public static final Block PEDESTAL = registerBlock("pedestal",
             properties -> new PedestalBlock(properties.nonOpaque().solid().strength(2, 6)));
+
+    public static final Block DARK_BARRIER = registerBlock("dark_barrier",
+            properties -> new DarkBarrierBlock(properties.strength(3, 9)));
+
+    public static final Block BARRIER_FIELD = registerBlockWithoutBlockItem("barrier_field",
+            properties -> new BarrierFieldBlock(properties.strength(-1.0F, 3600000.0F).dropsNothing().noCollision().nonOpaque()));
 
     private static Block registerBlock(String name, Function<AbstractBlock.Settings, Block> function) {
         Block toRegister = function.apply(AbstractBlock.Settings.create().registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(DarkArtsRevival.MOD_ID, name))));

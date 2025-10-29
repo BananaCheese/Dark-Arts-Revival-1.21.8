@@ -47,6 +47,15 @@ public class BarrierFieldBlock extends Block {
         return VoxelShapes.empty(); // No visual outline
     }
 
+    @Override
+    protected boolean canPathfindThrough(BlockState state, net.minecraft.entity.ai.pathing.NavigationType type) {
+        return false; // Tell mob AI this block is solid for pathfinding
+    }
+
+    protected VoxelShape getCullingShape(BlockState state, BlockView world, BlockPos pos) {
+        return VoxelShapes.empty(); // Don't cull faces behind it (invisible)
+    }
+
     protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
         // Push mobs back gently when they hit the barrier
         if (entity instanceof MobEntity mob) {

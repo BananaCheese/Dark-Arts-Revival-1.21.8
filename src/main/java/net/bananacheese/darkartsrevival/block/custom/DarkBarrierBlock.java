@@ -79,6 +79,15 @@ public class DarkBarrierBlock extends Block {
                     player.sendMessage(Text.literal("§6" + side.getAxis() + " barrier: " +
                             (currentState ? "§cOFF" : "§aON")), true);
                 }
+
+                if (side.getAxis().isVertical()) {
+                    BooleanProperty property = getPropertyForDirection(side);
+                    boolean currentState = state.get(property);
+                    world.setBlockState(pos, state.with(property, !currentState));
+
+                    player.sendMessage(Text.literal("§6" + side.getAxis() + " barrier: " +
+                            (currentState ? "§cOFF" : "§aON")), true);
+                }
             }
             return ActionResult.SUCCESS;
         }

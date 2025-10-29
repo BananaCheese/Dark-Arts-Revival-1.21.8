@@ -7,8 +7,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 public class BarrierManager {
     private static final int BARRIER_RANGE = 2; // 2 blocks out from the source
+
+    // Track which barrier blocks are controlling which field positions
+    private static final Map<BlockPos, Set<BlockPos>> BARRIER_SOURCES = new HashMap<>();
 
     /**
      * Updates all barrier fields for a Dark Barrier block
@@ -16,44 +24,68 @@ public class BarrierManager {
     public static void updateBarriers(World world, BlockPos sourcePos, BlockState sourceState) {
         if (world.isClient) return;
 
+        // Clear old barriers for this source
+        removeBarriersForSource(world, sourcePos);
+
+        // Create new barriers
+        Set<BlockPos> controlledFields = new HashSet<>();
+
         // Check all 6 directions
         for (Direction direction : Direction.values()) {
             boolean isActive = DarkBarrierBlock.isBarrierActive(sourceState, direction);
-            updateBarrierInDirection(world, sourcePos, direction, isActive);
+            if (isActive) {
+                controlledFields.addAll(createBarrierInDirection(world, sourcePos, direction));
+            }
+        }
+
+        // Store the controlled fields
+        if (!controlledFields.isEmpty()) {
+            BARRIER_SOURCES.put(sourcePos, controlledFields);
         }
     }
 
     /**
-     * Updates barriers in a specific direction
+     * Creates barriers in a specific direction and returns the positions
      */
-    private static void updateBarrierInDirection(World world, BlockPos sourcePos, Direction direction, boolean active) {
-        for (int distance = 1; distance <= BARRIER_RANGE; distance++) {
-            BlockPos barrierPos = sourcePos.offset(direction, distance);
+    private static Set<BlockPos> createBarrierInDirection(World world, BlockPos sourcePos, Direction direction) {
+        Set<BlockPos> createdFields = new HashSet<>();
 
-            // For horizontal directions, create 2-block-tall barriers
-            if (direction.getAxis().isHorizontal()) {
-                for (int y = 0; y <= 1; y++) {
-                    BlockPos fieldPos = barrierPos.up(y);
-                    setBarrierField(world, fieldPos, active);
-                }
-            } else {
-                // For vertical directions, just place at that position
-                setBarrierField(world, barrierPos, active);
+        for (int distance = 1; distance <= BARRIER_RANGE; distance++) {
+            BlockPos fieldPos = sourcePos.offset(direction, distance);
+
+            // Only create barrier if it's air or already a barrier field
+            if (world.getBlockState(fieldPos).isAir() ||
+                    world.getBlockState(fieldPos).getBlock() instanceof BarrierFieldBlock) {
+                world.setBlockState(fieldPos, DABlocks.BARRIER_FIELD.getDefaultState());
+                createdFields.add(fieldPos);
             }
         }
+
+        return createdFields;
     }
 
-    private static void setBarrierField(World world, BlockPos pos, boolean active) {
-        if (active) {
-            // Place barrier field if position is air or already a barrier field
-            if (world.getBlockState(pos).isAir() ||
-                    world.getBlockState(pos).getBlock() instanceof BarrierFieldBlock) {
-                world.setBlockState(pos, DABlocks.BARRIER_FIELD.getDefaultState());
-            }
-        } else {
-            // Remove barrier field if it exists
-            if (world.getBlockState(pos).getBlock() instanceof BarrierFieldBlock) {
-                world.setBlockState(pos, net.minecraft.block.Blocks.AIR.getDefaultState());
+    /**
+     * Removes only the barriers controlled by this specific source
+     */
+    private static void removeBarriersForSource(World world, BlockPos sourcePos) {
+        Set<BlockPos> controlledFields = BARRIER_SOURCES.remove(sourcePos);
+        if (controlledFields != null) {
+            for (BlockPos fieldPos : controlledFields) {
+                // Only remove if it's still a barrier field (and not controlled by another source)
+                if (world.getBlockState(fieldPos).getBlock() instanceof BarrierFieldBlock) {
+                    // Check if any other source is still controlling this position
+                    boolean stillControlled = false;
+                    for (Set<BlockPos> otherFields : BARRIER_SOURCES.values()) {
+                        if (otherFields.contains(fieldPos)) {
+                            stillControlled = true;
+                            break;
+                        }
+                    }
+
+                    if (!stillControlled) {
+                        world.setBlockState(fieldPos, net.minecraft.block.Blocks.AIR.getDefaultState());
+                    }
+                }
             }
         }
     }
@@ -62,8 +94,6 @@ public class BarrierManager {
      * Removes all barriers associated with a Dark Barrier block
      */
     public static void removeAllBarriers(World world, BlockPos sourcePos) {
-        for (Direction direction : Direction.values()) {
-            updateBarrierInDirection(world, sourcePos, direction, false);
-        }
+        removeBarriersForSource(world, sourcePos);
     }
 }

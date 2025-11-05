@@ -22,4 +22,3 @@ public class DAModelProvider extends FabricModelProvider {
         itemModelGenerator.register(DAItems.ALTER_ANALYZER, Models.GENERATED);
     }
 }
-

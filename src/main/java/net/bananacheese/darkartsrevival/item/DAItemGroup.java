@@ -19,6 +19,7 @@ public class DAItemGroup {
 
                         entries.add(DABlocks.ALTER);
                         entries.add(DABlocks.PEDESTAL);
+                        entries.add(DABlocks.DARK_BARRIER);
 
                         entries.add(DAItems.ALTER_ANALYZER);
                         entries.add(DAItems.SOUL_SYRINGE);

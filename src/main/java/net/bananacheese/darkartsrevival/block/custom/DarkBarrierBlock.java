@@ -2,6 +2,7 @@ package net.bananacheese.darkartsrevival.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import net.bananacheese.darkartsrevival.block.BarrierManager;
+import net.bananacheese.darkartsrevival.block.base.ConnectedTextureBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,8 +17,11 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 
-public class DarkBarrierBlock extends Block {
+import java.util.Objects;
+
+public class DarkBarrierBlock extends ConnectedTextureBlock {
     public static final MapCodec<DarkBarrierBlock> CODEC = createCodec(DarkBarrierBlock::new);
 
     // Properties for each side being active
@@ -30,7 +34,7 @@ public class DarkBarrierBlock extends Block {
 
     public DarkBarrierBlock(Settings settings) {
         super(settings);
-        setDefaultState(getStateManager().getDefaultState()
+        setDefaultState(getConnectionDefaultState(getStateManager().getDefaultState())
                 .with(NORTH, false)
                 .with(SOUTH, false)
                 .with(EAST, false)
@@ -46,19 +50,30 @@ public class DarkBarrierBlock extends Block {
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        super.appendProperties(builder);
         builder.add(NORTH, SOUTH, EAST, WEST, UP, DOWN);
     }
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return getDefaultState();
+        return updateConnections(Objects.requireNonNull(super.getPlacementState(ctx)), ctx.getWorld(), ctx.getBlockPos());
     }
 
     @Override
-    protected void onBlockAdded(BlockState state, net.minecraft.world.World world, BlockPos pos, BlockState oldState, boolean notify) {
+    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
+                                                WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+        return updateConnections(super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos),
+                world, pos);
+    }
+
+    @Override
+    protected void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         super.onBlockAdded(state, world, pos, oldState, notify);
         if (!world.isClient) {
-            // Initialize barriers when block is placed
+            // Update neighboring connections
+            updateNeighborConnections(world, pos);
+
+            // Initialize barriers
             BarrierManager.updateBarriers(world, pos, state);
         }
     }
@@ -76,7 +91,7 @@ public class DarkBarrierBlock extends Block {
                     boolean currentState = state.get(property);
                     world.setBlockState(pos, state.with(property, !currentState));
 
-                    player.sendMessage(Text.literal("§6" + side.getAxis() + " barrier: " +
+                    player.sendMessage(Text.literal("§6" + side.name() + " barrier: " +
                             (currentState ? "§cOFF" : "§aON")), true);
                 }
 
@@ -85,7 +100,7 @@ public class DarkBarrierBlock extends Block {
                     boolean currentState = state.get(property);
                     world.setBlockState(pos, state.with(property, !currentState));
 
-                    player.sendMessage(Text.literal("§6" + side.getAxis() + " barrier: " +
+                    player.sendMessage(Text.literal("§6" + side.name() + " barrier: " +
                             (currentState ? "§cOFF" : "§aON")), true);
                 }
             }
@@ -102,7 +117,6 @@ public class DarkBarrierBlock extends Block {
             case WEST -> WEST;
             case UP -> UP;
             case DOWN -> DOWN;
-            default -> NORTH; // Fallback
         };
     }
 
@@ -114,7 +128,6 @@ public class DarkBarrierBlock extends Block {
             case WEST -> WEST;
             case UP -> UP;
             case DOWN -> DOWN;
-            default -> null;
         };
         return property != null && state.get(property);
     }

@@ -10,9 +10,8 @@ public class DarkArtsRevivalDataGenerator implements DataGeneratorEntrypoint {
         FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
 
         pack.addProvider(DABlockTagProvider::new);
-        pack.addProvider(DAConnectedTextureBlockStateProvider::new);
         pack.addProvider(DALootTableProvider::new);
         pack.addProvider(DAModelProvider::new);
         pack.addProvider(DARecipeProvider::new);
-	}
+    }
 }

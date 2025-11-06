@@ -109,7 +109,7 @@ public class DarkBarrierBlock extends ConnectedTextureBlock {
         return ActionResult.PASS;
     }
 
-    private BooleanProperty getPropertyForDirection(Direction direction) {
+    public static BooleanProperty getPropertyForDirection(Direction direction) {
         return switch (direction) {
             case NORTH -> NORTH;
             case SOUTH -> SOUTH;

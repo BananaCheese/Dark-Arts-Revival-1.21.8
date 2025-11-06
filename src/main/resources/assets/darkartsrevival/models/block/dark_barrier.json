@@ -1,0 +1,13 @@
+{
+  "loader": "fusion:model",
+  "type": "connecting",
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "darkartsrevival:block/dark_barrier_ctm"
+  },
+  "connections": [
+    {
+      "type": "is_same_block"
+    }
+  ]
+}

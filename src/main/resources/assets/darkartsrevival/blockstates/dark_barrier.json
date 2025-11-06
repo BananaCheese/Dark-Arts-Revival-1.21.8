@@ -1,55 +1,7 @@
 {
-  "multipart": [
-    {
-      "apply": { "model": "darkartsrevival:block/dark_barrier_base" }
-    },
-    {
-      "when": { "north": "true" },
-      "apply": { "model": "darkartsrevival:block/dark_barrier_overlay_north_active" }
-    },
-    {
-      "when": { "connected_north": "true" },
-      "apply": { "model": "darkartsrevival:block/dark_barrier_overlay_north_connected" }
-    },
-    {
-      "when": { "south": "true" },
-      "apply": { "model": "darkartsrevival:block/dark_barrier_overlay_south_active" }
-    },
-    {
-      "when": { "connected_south": "true" },
-      "apply": { "model": "darkartsrevival:block/dark_barrier_overlay_south_connected" }
-    },
-    {
-      "when": { "east": "true" },
-      "apply": { "model": "darkartsrevival:block/dark_barrier_overlay_east_active" }
-    },
-    {
-      "when": { "connected_east": "true" },
-      "apply": { "model": "darkartsrevival:block/dark_barrier_overlay_east_connected" }
-    },
-    {
-      "when": { "west": "true" },
-      "apply": { "model": "darkartsrevival:block/dark_barrier_overlay_west_active" }
-    },
-    {
-      "when": { "connected_west": "true" },
-      "apply": { "model": "darkartsrevival:block/dark_barrier_overlay_west_connected" }
-    },
-    {
-      "when": { "up": "true" },
-      "apply": { "model": "darkartsrevival:block/dark_barrier_overlay_up_active" }
-    },
-    {
-      "when": { "connected_up": "true" },
-      "apply": { "model": "darkartsrevival:block/dark_barrier_overlay_up_connected" }
-    },
-    {
-      "when": { "down": "true" },
-      "apply": { "model": "darkartsrevival:block/dark_barrier_overlay_down_active" }
-    },
-    {
-      "when": { "connected_down": "true" },
-      "apply": { "model": "darkartsrevival:block/dark_barrier_overlay_down_connected" }
+  "variants": {
+    "": {
+      "model": "darkartsrevival:block/dark_barrier"
     }
-  ]
+  }
 }

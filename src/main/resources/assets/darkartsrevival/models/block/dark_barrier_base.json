@@ -1,6 +1,0 @@
-{
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "darkartsrevival:block/dark_barrier_inactive"
-  }
-}

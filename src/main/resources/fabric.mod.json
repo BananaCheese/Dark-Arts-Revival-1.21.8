@@ -30,9 +30,11 @@
 		"fabricloader": ">=0.17.2",
 		"minecraft": "~1.21.8",
 		"java": ">=21",
-		"fabric-api": "*"
+		"fabric-api": "*",
+        "fusion": ">=1.0.0"
+
 	},
 	"suggests": {
-		"another-mod": "*"
+        "fusion": ">=1.0.0"
 	}
 }

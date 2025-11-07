@@ -8,7 +8,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 
 public class BarrierParticleRenderer {
-    private static final int PARTICLE_RANGE = 5; // Show particles within 16 blocks
+    private static final int PARTICLE_RANGE = 5; // Show particles within 5 blocks
     private static final int PARTICLE_CHECK_INTERVAL = 20; // Check every 5 ticks
     private static int tickCounter = 0;
 

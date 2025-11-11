@@ -2,7 +2,6 @@ package net.bananacheese.darkartsrevival.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import net.bananacheese.darkartsrevival.block.base.ConnectedTextureBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.Entity;
@@ -21,6 +20,9 @@ import net.minecraft.world.World;
 public class CloudBlock extends ConnectedTextureBlock {
     public static final MapCodec<CloudBlock> CODEC = createCodec(CloudBlock::new);
 
+    // Only the top surface is solid (like a lily pad)
+    private static final VoxelShape TOP_SHAPE = VoxelShapes.cuboid(0, 0.875, 0, 1, 1, 1);
+
     // Jump cooldown tracker per player
     private static final java.util.Map<java.util.UUID, Long> JUMP_COOLDOWNS = new java.util.HashMap<>();
     private static final long JUMP_COOLDOWN_MS = 500; // 0.5 second cooldown
@@ -30,20 +32,85 @@ public class CloudBlock extends ConnectedTextureBlock {
     }
 
     @Override
-    protected MapCodec<? extends Block> getCodec() {
+    protected MapCodec<? extends ConnectedTextureBlock> getCodec() {
         return CODEC;
     }
 
     @Override
     protected VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        // If entity is sneaking, no collision (they fall through)
+        // If entity is sneaking, no collision at all (fall through)
         if (context instanceof net.minecraft.block.EntityShapeContext entityContext) {
             Entity entity = entityContext.getEntity();
             if (entity != null && entity.isSneaking()) {
                 return VoxelShapes.empty();
             }
+
+            // One-way platform: only solid if entity is above the block
+            if (entity != null) {
+                // Check if entity's bottom (feet) is above the top surface
+                double entityBottom = entity.getY();
+                double blockTop = pos.getY() + 0.9375; // Top of the thin collision shape
+
+                // Only provide collision if entity is coming from above
+                if (entityBottom > blockTop) {
+                    return TOP_SHAPE;
+                }
+
+                // No collision if entity is below or inside (allows jumping through)
+                return VoxelShapes.empty();
+            }
         }
-        return VoxelShapes.fullCube();
+
+        // Default: only solid from above
+        return TOP_SHAPE;
+    }
+
+    @Override
+    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return VoxelShapes.fullCube(); // Visual outline is still full cube
+    }
+
+    @Override
+    protected VoxelShape getCameraCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        // No camera collision - prevents forcing crouch when inside
+        return VoxelShapes.empty();
+    }
+
+    @Override
+    protected boolean isSideInvisible(BlockState state, BlockState stateFrom, net.minecraft.util.math.Direction direction) {
+        // For cloud blocks, we want special culling behavior
+        if (stateFrom.isOf(this)) {
+            // NEVER cull the top face - players need to see what they're standing on
+            if (direction == net.minecraft.util.math.Direction.UP) {
+                return false;
+            }
+
+            // NEVER cull the bottom face - helps with depth perception when looking down through clouds
+            if (direction == net.minecraft.util.math.Direction.DOWN) {
+                return false;
+            }
+
+            // Cull horizontal faces between connected clouds for seamless look
+            return true;
+        }
+
+        return super.isSideInvisible(state, stateFrom, direction);
+    }
+
+    @Override
+    protected float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
+        // Full brightness - clouds don't cast shadows
+        return 1.0F;
+    }
+
+    @Override
+    protected boolean isTransparent(BlockState state) {
+        return true;
+    }
+
+    public float getOpacity(BlockState state, BlockView world, BlockPos pos) {
+        // Slightly transparent to see through stacked clouds
+        return 0.0F;
     }
 
     protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
@@ -52,39 +119,27 @@ public class CloudBlock extends ConnectedTextureBlock {
             Vec3d velocity = entity.getVelocity();
             entity.setVelocity(velocity.x, Math.max(velocity.y, -0.2), velocity.z);
         }
-
-        // Check for player jump
-        if (!world.isClient && entity instanceof PlayerEntity player) {
-            Vec3d velocity = player.getVelocity();
-
-            // Debug logging
-            if (velocity.y > 0.2) {
-                net.bananacheese.darkartsrevival.DarkArtsRevival.LOGGER.info(
-                        "Player velocity Y: {}, onGround: {}", velocity.y, player.isOnGround()
-                );
-            }
-
-            // Detect jump: upward velocity in jump range
-            if (velocity.y > 0.35 && velocity.y < 0.55) {
-                java.util.UUID playerId = player.getUuid();
-                long currentTime = System.currentTimeMillis();
-
-                Long lastJump = JUMP_COOLDOWNS.get(playerId);
-                if (lastJump == null || (currentTime - lastJump) > JUMP_COOLDOWN_MS) {
-                    net.bananacheese.darkartsrevival.DarkArtsRevival.LOGGER.info("LAUNCHING PLAYER!");
-                    launchPlayerWithWindCharge(world, pos, player);
-                    JUMP_COOLDOWNS.put(playerId, currentTime);
-                }
-            }
-        }
     }
 
     protected void onLandedUpon(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
-        // Reduce fall damage significantly
+        // Reduce fall damage significantly (90% reduction)
         entity.handleFallDamage(fallDistance, 0.1F, world.getDamageSources().fall());
     }
 
-    private void launchPlayerWithWindCharge(World world, BlockPos pos, PlayerEntity player) {
+    public static void onPlayerJump(World world, BlockPos pos, PlayerEntity player) {
+        if (world.isClient) return;
+
+        java.util.UUID playerId = player.getUuid();
+        long currentTime = System.currentTimeMillis();
+
+        Long lastJump = JUMP_COOLDOWNS.get(playerId);
+        if (lastJump == null || (currentTime - lastJump) > JUMP_COOLDOWN_MS) {
+            launchPlayerWithWindCharge(world, pos, player);
+            JUMP_COOLDOWNS.put(playerId, currentTime);
+        }
+    }
+
+    private static void launchPlayerWithWindCharge(World world, BlockPos pos, PlayerEntity player) {
         if (!(world instanceof ServerWorld serverWorld)) return;
 
         // Spawn wind charge below player

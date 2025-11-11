@@ -1,10 +1,7 @@
 package net.bananacheese.darkartsrevival.block;
 
 import net.bananacheese.darkartsrevival.DarkArtsRevival;
-import net.bananacheese.darkartsrevival.block.custom.AlterBlock;
-import net.bananacheese.darkartsrevival.block.custom.BarrierFieldBlock;
-import net.bananacheese.darkartsrevival.block.custom.DarkBarrierBlock;
-import net.bananacheese.darkartsrevival.block.custom.PedestalBlock;
+import net.bananacheese.darkartsrevival.block.custom.*;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -12,6 +9,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 
 import java.util.function.Function;
@@ -28,6 +26,9 @@ public class DABlocks {
 
     public static final Block BARRIER_FIELD = registerBlockWithoutBlockItem("barrier_field",
             properties -> new BarrierFieldBlock(properties.strength(-1.0F, 3600000.0F).dropsNothing().noCollision().nonOpaque()));
+
+    public static final Block CLOUD_BLOCK = registerBlock("cloud_block",
+            properties -> new CloudBlock(properties.strength(0.5f).sounds(BlockSoundGroup.WOOL).nonOpaque().allowsSpawning((state, world, pos, type) -> false).suffocates((state, world, pos) -> false)));
 
     private static Block registerBlock(String name, Function<AbstractBlock.Settings, Block> function) {
         Block toRegister = function.apply(AbstractBlock.Settings.create().registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(DarkArtsRevival.MOD_ID, name))));

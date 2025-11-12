@@ -279,32 +279,12 @@ public class RitualHandler {
                 if (world.getBlockEntity(pedestalPos) instanceof PedestalBlockEntity pedestalEntity) {
                     ItemStack stack = pedestalEntity.getStack(0);
                     if (ingredient.test(stack)) {
-                        // Clear the inventory slot
-                        pedestalEntity.setStack(0, ItemStack.EMPTY);
+                        pedestalEntity.removeStack(0);
 
-                        // Mark dirty to save changes
-                        pedestalEntity.markDirty();
-
-                        // Get the block state
+                        // Update pedestal block state to sync with client
                         BlockState pedestalState = world.getBlockState(pedestalPos);
-
-                        // Notify all listeners (important for client sync)
-                        world.updateListeners(pedestalPos, pedestalState, pedestalState,
-                                net.minecraft.block.Block.NOTIFY_ALL);
-
-                        // Mark chunk for update
+                        world.updateListeners(pedestalPos, pedestalState, pedestalState, net.minecraft.block.Block.NOTIFY_ALL);
                         world.getChunkManager().markForUpdate(pedestalPos);
-
-                        // Sync block entity data to nearby players
-                        var updatePacket = pedestalEntity.toUpdatePacket();
-                        if (updatePacket != null) {
-                            // Send to all tracking players
-                            for (var player : world.getPlayers()) {
-                                if (player.squaredDistanceTo(pedestalPos.getX(), pedestalPos.getY(), pedestalPos.getZ()) < 64 * 64) {
-                                    player.networkHandler.sendPacket(updatePacket);
-                                }
-                            }
-                        }
 
                         usedPedestals.add(i);
                         break;

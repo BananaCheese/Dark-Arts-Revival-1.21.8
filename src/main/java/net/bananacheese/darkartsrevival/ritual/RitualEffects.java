@@ -171,7 +171,7 @@ public class RitualEffects {
         // Swirling portal particles
         for (int i = 0; i < 100; i++) {
             double angle = (i / 100.0) * Math.PI * 4;
-            double radius = 1.0 + Math.random() * 1.0;
+            double radius = 1.0 + Math.random();
             double x = pos.getX() + 0.5 + Math.cos(angle) * radius;
             double z = pos.getZ() + 0.5 + Math.sin(angle) * radius;
             double y = pos.getY() + 0.5 + Math.random() * 2.0;
@@ -333,18 +333,5 @@ public class RitualEffects {
         world.spawnParticles(ParticleTypes.DRIPPING_DRIPSTONE_LAVA,
                 pos.getX() + 0.5, pos.getY() + 2.0, pos.getZ() + 0.5,
                 20, 0.3, 0.1, 0.3, 0.05);
-    }
-
-    /**
-     * Play effect based on tier (fallback when no specific effect is defined)
-     */
-    public static void playTierEffect(ServerWorld world, BlockPos pos, int tier) {
-        switch (tier) {
-            case 1 -> playBasicEffect(world, pos);
-            case 2 -> playEnchantingEffect(world, pos);
-            case 3 -> playSoulEffect(world, pos);
-            case 4 -> playRevivalEffect(world, pos);
-            default -> playBasicEffect(world, pos);
-        }
     }
 }

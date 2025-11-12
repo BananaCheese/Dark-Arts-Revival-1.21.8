@@ -108,21 +108,8 @@ public class CloudBlock extends ConnectedTextureBlock {
         return true;
     }
 
-    public float getOpacity(BlockState state, BlockView world, BlockPos pos) {
-        // Slightly transparent to see through stacked clouds
-        return 0.0F;
-    }
-
-    protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-        // Slow falling when falling through (crouching)
-        if (entity.isSneaking() && entity.getVelocity().y < 0) {
-            Vec3d velocity = entity.getVelocity();
-            entity.setVelocity(velocity.x, Math.max(velocity.y, -0.2), velocity.z);
-        }
-    }
-
-    protected void onLandedUpon(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
-        // Reduce fall damage significantly (90% reduction)
+    @Override
+    public void onLandedUpon(World world, BlockState state, BlockPos pos, Entity entity, double fallDistance) {
         entity.handleFallDamage(fallDistance, 0.1F, world.getDamageSources().fall());
     }
 

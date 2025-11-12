@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "minecraft:amethyst_block",
+    "B": "minecraft:blackstone",
+    "D": "darkartsrevival:dark_crystal",
+    "R": "minecraft:redstone_block"
+  },
+  "pattern": [
+    "BRB",
+    "ADA",
+    "BRB"
+  ],
+  "result": {
+    "count": 8,
+    "id": "darkartsrevival:dark_barrier"
+  }
+}

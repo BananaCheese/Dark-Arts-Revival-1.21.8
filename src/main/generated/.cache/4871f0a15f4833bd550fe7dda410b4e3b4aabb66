@@ -1,7 +1,9 @@
 // 1.21.8	-999999999-01-01T00:00:00	Dark Arts Revival/Dark Arts Revival Recipes
 6a667406d444bb1890f7846f75b0708a828e8a2e data/darkartsrevival/advancement/recipes/misc/alter.json
+5f0027f1b2a281fdf407db910576df7e4522676d data/darkartsrevival/advancement/recipes/misc/dark_barrier.json
 d74b5204b49b81335661be7d92f135a2dcf09db7 data/darkartsrevival/advancement/recipes/misc/pedestal.json
-09a9e1c5b3d3a4bc8d87fae974f277bb20eb4b0d data/darkartsrevival/advancement/recipes/misc/soul_syringe.json
+d8aabfd37d4c7b23dcb14f46ef46b722c852e492 data/darkartsrevival/advancement/recipes/misc/soul_syringe.json
 0a8fecc224fa69573c2da3e8eff0ece8e365f18c data/darkartsrevival/recipe/alter.json
+775efce94a9d759a58268cbb7f311cd417fa0a5a data/darkartsrevival/recipe/dark_barrier.json
 7bc96927764a8ccbdff0ba9c162bc6bb4ff34c24 data/darkartsrevival/recipe/pedestal.json
 4de832b4a24cc29f38e96cc8c82e2f68a3c86092 data/darkartsrevival/recipe/soul_syringe.json

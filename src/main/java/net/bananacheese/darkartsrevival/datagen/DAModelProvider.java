@@ -27,6 +27,8 @@ public class DAModelProvider extends FabricModelProvider {
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
         itemModelGenerator.register(DAItems.ALTER_ANALYZER, Models.GENERATED);
+
+        itemModelGenerator.register(DAItems.DARK_CRYSTAL, Models.GENERATED);
     }
 
     private void generateConnectedTextureBlock(String blockName, String baseTexture, String activeTexture) {

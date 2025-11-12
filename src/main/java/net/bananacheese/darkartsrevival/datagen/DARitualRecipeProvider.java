@@ -55,8 +55,8 @@ public class DARitualRecipeProvider extends FabricRecipeProvider {
                                 Ingredient.ofItems(Items.SCULK),
                                 Ingredient.ofItems(Items.SCULK)
                         ),
-                        new ItemStack(Items.NETHER_STAR),
-                        "lightning");
+                        new ItemStack(DAItems.DARK_CRYSTAL),
+                        "dark");
 
                 createRevivalRecipe(recipeExporter, "player_revival",
                         4, // Min tier

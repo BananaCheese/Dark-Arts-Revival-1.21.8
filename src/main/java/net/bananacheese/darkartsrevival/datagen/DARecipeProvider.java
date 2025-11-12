@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.recipe.RecipeExporter;
 import net.minecraft.data.recipe.RecipeGenerator;
-import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.RegistryWrapper;
@@ -28,7 +27,7 @@ public class DARecipeProvider extends FabricRecipeProvider {
                         .pattern("COC")
                         .pattern("CCC")
                         .input('C', Items.COBBLESTONE).input('O', Items.CRYING_OBSIDIAN)
-                        .criterion(hasItem(Items.CRYING_OBSIDIAN), conditionsFromItem(Items.CRYING_OBSIDIAN))
+                        .criterion("has_crying_obsidian", conditionsFromItem(Items.CRYING_OBSIDIAN))
                         .offerTo(exporter);
 
                 createShaped(RecipeCategory.MISC, DABlocks.PEDESTAL)
@@ -36,7 +35,7 @@ public class DARecipeProvider extends FabricRecipeProvider {
                         .pattern(" C ")
                         .pattern("CCC")
                         .input('C', Items.COBBLESTONE).input('O', Items.CRYING_OBSIDIAN).input('R', Items.RED_CARPET)
-                        .criterion(hasItem(Items.CRYING_OBSIDIAN), conditionsFromItem(Items.CRYING_OBSIDIAN))
+                        .criterion("has_crying_obsidian", conditionsFromItem(Items.CRYING_OBSIDIAN))
                         .offerTo(exporter);
 
                 createShaped(RecipeCategory.MISC, DAItems.SOUL_SYRINGE)
@@ -44,7 +43,15 @@ public class DARecipeProvider extends FabricRecipeProvider {
                         .pattern(" XG")
                         .pattern("I  ")
                         .input('G', Items.GOLD_INGOT).input('I', Items.IRON_INGOT).input('X', Items.GLASS_PANE)
-                        .criterion(hasItem(Items.GLASS_PANE), conditionsFromItem(Items.GOLD_INGOT))
+                        .criterion("has_gold_ingot", this.conditionsFromItem(Items.GOLD_INGOT))
+                        .offerTo(exporter);
+
+                createShaped(RecipeCategory.MISC, DABlocks.DARK_BARRIER, 8)
+                        .pattern("BRB")
+                        .pattern("ADA")
+                        .pattern("BRB")
+                        .input('B', Items.BLACKSTONE).input('R', Items.REDSTONE_BLOCK).input('A', Items.AMETHYST_BLOCK).input('D', DAItems.DARK_CRYSTAL)
+                        .criterion("has_dark_crystal", this.conditionsFromItem(DAItems.DARK_CRYSTAL))
                         .offerTo(exporter);
             }
 

@@ -1,6 +1,5 @@
 package net.bananacheese.darkartsrevival.block.custom;
 
-import net.bananacheese.darkartsrevival.block.entity.custom.AlterBlockEntity;
 import net.bananacheese.darkartsrevival.block.entity.custom.PedestalBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -49,34 +48,34 @@ public class PedestalBlock extends BlockWithEntity implements BlockEntityProvide
     @Override
     protected ActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos,
                                          PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if(world.getBlockEntity(pos) instanceof PedestalBlockEntity pedestalEntity) {
-            // Place item on pedestal
-            if(pedestalEntity.isEmpty() && !stack.isEmpty()) {
-                pedestalEntity.setStack(0, stack.copyWithCount(1));
-                world.playSound(player, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1f, 2f);
-                stack.decrement(1);
-
-                pedestalEntity.markDirty();
-                world.updateListeners(pos, state, state, net.minecraft.block.Block.NOTIFY_ALL);
-                if (!world.isClient) {
-                    ((net.minecraft.server.world.ServerWorld) world).getChunkManager().markForUpdate(pos);
-                }
-            }
-            // Remove item from pedestal
-            else if(stack.isEmpty() && !player.isSneaking()) {
-                ItemStack stackOnPedestal = pedestalEntity.getStack(0);
-                player.setStackInHand(Hand.MAIN_HAND, stackOnPedestal);
-                world.playSound(player, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1f, 1f);
-                pedestalEntity.clear();
-
-                pedestalEntity.markDirty();
-                world.updateListeners(pos, state, state, net.minecraft.block.Block.NOTIFY_ALL);
-                if (!world.isClient) {
-                    ((net.minecraft.server.world.ServerWorld) world).getChunkManager().markForUpdate(pos);
-                }
-            }
+        if (!(world.getBlockEntity(pos) instanceof PedestalBlockEntity pedestalEntity)) {
+            return ActionResult.PASS;
         }
 
-        return ActionResult.SUCCESS;
+        if (player.isSneaking() && !pedestalEntity.isEmpty()) {
+            // Sneak: Pick up directly to inventory (no empty hand needed)
+            ItemStack onPedestal = pedestalEntity.removeStack(0);
+            if (!player.getInventory().insertStack(onPedestal)) {
+                // Inventory full: Put back
+                pedestalEntity.setStack(0, onPedestal);
+                return ActionResult.FAIL;
+            }
+            world.playSound(player, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1f, 1f);
+            return ActionResult.SUCCESS;
+        } else if (pedestalEntity.isEmpty() && !stack.isEmpty()) {
+            // Place item on empty pedestal
+            pedestalEntity.setStack(0, stack.copyWithCount(1));
+            world.playSound(player, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1f, 2f);
+            stack.decrement(1);
+            return ActionResult.SUCCESS;
+        } else if (stack.isEmpty() && !player.isSneaking() && !pedestalEntity.isEmpty()) {
+            // Non-sneak empty hand: Pick up to hand
+            ItemStack onPedestal = pedestalEntity.removeStack(0);
+            player.setStackInHand(hand, onPedestal);
+            world.playSound(player, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1f, 1f);
+            return ActionResult.SUCCESS;
+        }
+
+        return ActionResult.PASS;
     }
 }

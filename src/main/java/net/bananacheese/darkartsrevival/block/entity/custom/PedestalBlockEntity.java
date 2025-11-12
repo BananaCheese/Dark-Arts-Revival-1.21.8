@@ -68,4 +68,32 @@ public class PedestalBlockEntity extends BlockEntity implements ImplementedInven
     public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
         return createNbt(registryLookup);
     }
+
+    @Override
+    public void markDirty() {
+        super.markDirty();
+        // Force sync to client when inventory changes
+        if (world != null && !world.isClient) {
+            BlockState state = getCachedState();
+            world.updateListeners(pos, state, state, net.minecraft.block.Block.NOTIFY_ALL);
+            ((net.minecraft.server.world.ServerWorld) world).getChunkManager().markForUpdate(pos);
+        }
+    }
+
+    @Override
+    public void setStack(int slot, ItemStack stack) {
+        getItems().set(slot, stack);
+        if (stack.getCount() > getMaxCountPerStack()) {
+            stack.setCount(getMaxCountPerStack());
+        }
+        // Trigger update when stack changes
+        markDirty();
+    }
+
+    @Override
+    public void clear() {
+        getItems().clear();
+        // Trigger update when cleared
+        markDirty();
+    }
 }

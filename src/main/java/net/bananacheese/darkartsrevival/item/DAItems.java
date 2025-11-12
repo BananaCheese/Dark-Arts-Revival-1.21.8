@@ -20,6 +20,8 @@ public class DAItems {
     public static final Item ALTER_ANALYZER = registerItem("alter_analyzer",
             setting -> new AlterAnalyzer(setting.maxCount(1)));
 
+    public static final Item DARK_CRYSTAL = registerItem("dark_crystal", Item::new);
+
     private static Item registerItem(String name, Function<Item.Settings, Item> function) {
         return Registry.register(Registries.ITEM, Identifier.of(DarkArtsRevival.MOD_ID, name),
                 function.apply(new Item.Settings().registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of(DarkArtsRevival.MOD_ID, name)))));

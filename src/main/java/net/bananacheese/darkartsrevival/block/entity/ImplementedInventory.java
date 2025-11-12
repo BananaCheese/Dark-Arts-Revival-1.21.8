@@ -2,28 +2,23 @@ package net.bananacheese.darkartsrevival.block.entity;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
-   /*
-    *A simple {@code SidedInventory} implementation with only default methods + an item list getter.
-    *
-    *<h2>Reading and writing to tags</h2>
-    *Use {@link Inventories#writeNbt(NbtCompound, DefaultedList, RegistryWrapper.WrapperLookup)} and
-    *{@link Inventories#readNbt(NbtCompound, DefaultedList, RegistryWrapper.WrapperLookup)}
-    *on {@linkplain #getItems() the item list}.
-    *
-    *License: <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>
-    *@author Juuz
-    */
+/*
+ *A simple {@code SidedInventory} implementation with only default methods + an item list getter.
+ *
+ *<h2>Reading and writing to tags</h2>
+ *Use {@link Inventories#writeNbt(NbtCompound, DefaultedList, RegistryWrapper.WrapperLookup)} and
+ *{@link Inventories#readNbt(NbtCompound, DefaultedList, RegistryWrapper.WrapperLookup)}
+ *on {@linkplain #getItems() the item list}.
+ *
+ *License: <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>
+ *@author Juuz
+ */
 
 @FunctionalInterface
 public interface ImplementedInventory extends SidedInventory {
@@ -175,7 +170,11 @@ public interface ImplementedInventory extends SidedInventory {
      */
     @Override
     default ItemStack removeStack(int slot) {
-        return Inventories.removeStack(getItems(), slot);
+        ItemStack result = Inventories.removeStack(getItems(), slot);
+        if (!result.isEmpty()) {
+            markDirty();
+        }
+        return result;
     }
 
     /*
@@ -193,6 +192,7 @@ public interface ImplementedInventory extends SidedInventory {
         if (stack.getCount() > getMaxCountPerStack()) {
             stack.setCount(getMaxCountPerStack());
         }
+        markDirty();
     }
 
     /*
@@ -201,6 +201,7 @@ public interface ImplementedInventory extends SidedInventory {
     @Override
     default void clear() {
         getItems().clear();
+        markDirty();
     }
 
     @Override

@@ -1,0 +1,16 @@
+{
+  "type": "darkartsrevival:revival_ritual",
+  "altar_item": "darkartsrevival:soul_syringe",
+  "fluid_amount": 1000,
+  "min_tier": 4,
+  "pedestal_items": [
+    "minecraft:totem_of_undying",
+    "minecraft:nether_star",
+    "minecraft:enchanted_golden_apple",
+    "minecraft:enchanted_golden_apple",
+    "minecraft:diamond_block",
+    "minecraft:diamond_block",
+    "minecraft:diamond_block",
+    "minecraft:diamond_block"
+  ]
+}

@@ -9,6 +9,7 @@ import net.bananacheese.darkartsrevival.event.PlayerDeathHandler;
 import net.bananacheese.darkartsrevival.item.DAItemGroup;
 import net.bananacheese.darkartsrevival.item.DAItems;
 import net.bananacheese.darkartsrevival.item.custom.SoulSyringe;
+import net.bananacheese.darkartsrevival.recipe.DARecipes;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
@@ -30,6 +31,7 @@ public class DarkArtsRevival implements ModInitializer {
         ReviveCommand.register();
         AlterTierCommand.register();
         PlayerDeathHandler.register();
+        DARecipes.registerRecipes();
 
         // Register tooltip callback
         ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, lines) -> {

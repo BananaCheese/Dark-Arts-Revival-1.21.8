@@ -1,0 +1,19 @@
+{
+  "type": "darkartsrevival:ritual",
+  "altar_item": "minecraft:crying_obsidian",
+  "min_tier": 4,
+  "pedestal_items": [
+    "minecraft:redstone_block",
+    "minecraft:redstone_block",
+    "minecraft:amethyst_block",
+    "minecraft:amethyst_block",
+    "minecraft:sculk",
+    "minecraft:sculk",
+    "minecraft:sculk",
+    "minecraft:sculk"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:nether_star"
+  }
+}

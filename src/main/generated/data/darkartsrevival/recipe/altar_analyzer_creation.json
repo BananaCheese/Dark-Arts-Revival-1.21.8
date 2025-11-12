@@ -1,0 +1,10 @@
+{
+  "type": "darkartsrevival:ritual",
+  "altar_item": "minecraft:gold_ingot",
+  "fluid_amount": 1000,
+  "min_tier": 1,
+  "result": {
+    "count": 1,
+    "id": "darkartsrevival:alter_analyzer"
+  }
+}

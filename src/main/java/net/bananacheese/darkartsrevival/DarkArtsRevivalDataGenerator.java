@@ -13,5 +13,6 @@ public class DarkArtsRevivalDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(DALootTableProvider::new);
         pack.addProvider(DAModelProvider::new);
         pack.addProvider(DARecipeProvider::new);
+        pack.addProvider(DARitualRecipeProvider::new);
     }
 }

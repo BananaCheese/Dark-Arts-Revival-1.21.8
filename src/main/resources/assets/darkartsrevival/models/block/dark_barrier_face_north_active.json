@@ -3,7 +3,8 @@
   "type": "connecting",
   "parent": "block/block",
   "textures": {
-    "north": "darkartsrevival:block/dark_barrier_active_ctm"
+    "north": "darkartsrevival:block/dark_barrier_active_ctm",
+    "particle": "darkartsrevival:block/dark_barrier_active_ctm"
   },
   "connections": [
     {

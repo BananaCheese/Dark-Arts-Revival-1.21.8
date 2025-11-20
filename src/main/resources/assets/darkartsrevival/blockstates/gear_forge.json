@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "": [
+      { "model": "darkartsrevival:block/gear_forge" },
+      { "model": "darkartsrevival:block/gear_forge_formed" }
+    ]
+  }
+}

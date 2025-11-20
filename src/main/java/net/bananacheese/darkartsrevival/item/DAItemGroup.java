@@ -22,6 +22,8 @@ public class DAItemGroup {
                         entries.add(DABlocks.DARK_BARRIER);
                         entries.add(DABlocks.CLOUD_BLOCK);
 
+                        entries.add(DABlocks.GEAR_FORGE_BLOCK);
+
                         entries.add(DAItems.ALTER_ANALYZER);
                         entries.add(DAItems.SOUL_SYRINGE);
 

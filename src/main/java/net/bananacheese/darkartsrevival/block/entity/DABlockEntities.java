@@ -3,6 +3,7 @@ package net.bananacheese.darkartsrevival.block.entity;
 import net.bananacheese.darkartsrevival.DarkArtsRevival;
 import net.bananacheese.darkartsrevival.block.DABlocks;
 import net.bananacheese.darkartsrevival.block.entity.custom.AlterBlockEntity;
+import net.bananacheese.darkartsrevival.block.entity.custom.GearForgeBlockEntity;
 import net.bananacheese.darkartsrevival.block.entity.custom.PedestalBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntityType;
@@ -18,6 +19,10 @@ public class DABlockEntities {
     public static final BlockEntityType<PedestalBlockEntity> PEDESTAL_BE =
             Registry.register(Registries.BLOCK_ENTITY_TYPE, Identifier.of(DarkArtsRevival.MOD_ID, "pedestal_be"),
                     FabricBlockEntityTypeBuilder.create(PedestalBlockEntity::new, DABlocks.PEDESTAL).build());
+
+    public static final BlockEntityType<GearForgeBlockEntity> GEAR_FORGE_BLOCK_ENTITY =
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, Identifier.of(DarkArtsRevival.MOD_ID, "gear_forge_block_entity"),
+                    FabricBlockEntityTypeBuilder.create(GearForgeBlockEntity::new, DABlocks.GEAR_FORGE_BLOCK).build());
 
     public static void registerBlockEntities() {
         DarkArtsRevival.LOGGER.info("Registering Block Entities for " + DarkArtsRevival.MOD_ID);

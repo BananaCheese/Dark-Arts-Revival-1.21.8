@@ -30,6 +30,9 @@ public class DABlocks {
     public static final Block CLOUD_BLOCK = registerBlock("cloud_block",
             properties -> new CloudBlock(properties.strength(0.5f).sounds(BlockSoundGroup.WOOL).nonOpaque().allowsSpawning((state, world, pos, type) -> false).suffocates((state, world, pos) -> false)));
 
+    public static final Block GEAR_FORGE_BLOCK = registerBlock("gear_forge",
+            properties-> new GearForgeBlock(properties.strength(4.0f).requiresTool().sounds(BlockSoundGroup.ANVIL).nonOpaque()));
+
     private static Block registerBlock(String name, Function<AbstractBlock.Settings, Block> function) {
         Block toRegister = function.apply(AbstractBlock.Settings.create().registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(DarkArtsRevival.MOD_ID, name))));
         registerBlockItem(name, toRegister);

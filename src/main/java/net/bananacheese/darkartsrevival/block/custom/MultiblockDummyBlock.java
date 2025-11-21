@@ -8,15 +8,13 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 public class MultiblockDummyBlock extends Block {
 
     public MultiblockDummyBlock(Settings settings) {
-        super(settings.noCollision().dropsNothing().strength(-1.0F, 3600000.0F));
+        // Back to unbreakable - hammer handles forming/unforming
+        super(settings.strength(-1.0f, 3600000.0f).dropsNothing().nonOpaque());
     }
 
     @Override
@@ -47,12 +45,8 @@ public class MultiblockDummyBlock extends Block {
 
     protected void onStateReplaced(BlockState state, ServerWorld world, BlockPos pos,
                                    BlockState newState, boolean moved) {
+        // Dummy blocks are now unbreakable, so this only triggers if replaced another way
         if (!state.isOf(newState.getBlock())) {
-            // When dummy is broken, unform the multiblock
-            BlockPos masterPos = findMasterBlock(world, pos);
-            if (masterPos != null && world.getBlockEntity(masterPos) instanceof GearForgeBlockEntity forge) {
-                forge.unformMultiblock();
-            }
             super.onStateReplaced(state, world, pos, moved);
         }
     }
@@ -75,23 +69,12 @@ public class MultiblockDummyBlock extends Block {
     }
 
     @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        // Full cube hitbox so players can click it
-        return VoxelShapes.fullCube();
-    }
-
-    @Override
-    protected VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return VoxelShapes.fullCube();
-    }
-
-    @Override
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.INVISIBLE;
     }
 
     @Override
-    public void randomDisplayTick(BlockState state, net.minecraft.world.World world, BlockPos pos, net.minecraft.util.math.random.Random random) {
+    public void randomDisplayTick(BlockState state, World world, BlockPos pos, net.minecraft.util.math.random.Random random) {
         // Prevent particles
     }
 }

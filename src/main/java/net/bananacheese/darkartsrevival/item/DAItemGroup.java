@@ -27,6 +27,8 @@ public class DAItemGroup {
                         entries.add(DAItems.ALTER_ANALYZER);
                         entries.add(DAItems.SOUL_SYRINGE);
 
+                        entries.add(DAItems.GEAR_FORGE_HAMMER);
+
                         entries.add(DAItems.DARK_CRYSTAL);
 
                     }).build());

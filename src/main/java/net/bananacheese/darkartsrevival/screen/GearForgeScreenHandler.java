@@ -26,7 +26,7 @@ public class GearForgeScreenHandler extends ScreenHandler {
 
         checkSize(inventory, 7);
         this.inventory = inventory;
-        inventory.onOpen(playerInventory.player);
+        // Don't call onOpen here - it's called by the block entity
 
         // Gear Forge Hexagon Slots
 
@@ -97,7 +97,7 @@ public class GearForgeScreenHandler extends ScreenHandler {
     @Override
     public void onClosed(PlayerEntity player) {
         super.onClosed(player);
-        this.inventory.onClose(player);
+        // Don't drop items or call onClose - the block entity handles persistence
     }
 
     // Getter for accessing inventory from screen (for stats display)

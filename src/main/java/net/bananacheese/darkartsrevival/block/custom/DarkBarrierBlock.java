@@ -3,11 +3,11 @@ package net.bananacheese.darkartsrevival.block.custom;
 import com.mojang.serialization.MapCodec;
 import net.bananacheese.darkartsrevival.block.BarrierManager;
 import net.bananacheese.darkartsrevival.block.base.ConnectedTextureBlock;
+import net.bananacheese.darkartsrevival.item.DAItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.Items;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.text.Text;
@@ -81,7 +81,7 @@ public class DarkBarrierBlock extends ConnectedTextureBlock {
     @Override
     protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         // For now, use redstone torch to toggle sides (replace with custom item later)
-        if (player.getStackInHand(Hand.MAIN_HAND).getItem() == Items.REDSTONE_TORCH) {
+        if (player.getStackInHand(Hand.MAIN_HAND).getItem() == DAItems.GEAR_FORGE_HAMMER) {
             if (!world.isClient) {
                 Direction side = hit.getSide();
 

@@ -2,6 +2,7 @@ package net.bananacheese.darkartsrevival.item;
 
 import net.bananacheese.darkartsrevival.DarkArtsRevival;
 import net.bananacheese.darkartsrevival.item.custom.AlterAnalyzer;
+import net.bananacheese.darkartsrevival.item.custom.GearForgeHammer;
 import net.bananacheese.darkartsrevival.item.custom.SoulSyringe;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -15,10 +16,13 @@ import java.util.function.Function;
 public class DAItems {
 
     public static final Item SOUL_SYRINGE = registerItem("soul_syringe",
-            setting -> new SoulSyringe(setting.maxCount(1)));
+            settings -> new SoulSyringe(settings.maxCount(1)));
 
     public static final Item ALTER_ANALYZER = registerItem("alter_analyzer",
-            setting -> new AlterAnalyzer(setting.maxCount(1)));
+            settings -> new AlterAnalyzer(settings.maxCount(1)));
+
+    public static final Item GEAR_FORGE_HAMMER = registerItem("gear_forge_hammer",
+            settings -> new GearForgeHammer(settings.maxCount(1).maxDamage(250))); // Durability like IE hammer
 
     public static final Item DARK_CRYSTAL = registerItem("dark_crystal", Item::new);
 

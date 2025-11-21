@@ -34,7 +34,7 @@ public class DABlocks {
             properties-> new GearForgeBlock(properties.strength(4.0f).requiresTool().sounds(BlockSoundGroup.ANVIL).nonOpaque()));
 
     public static final Block MULTIBLOCK_DUMMY = registerBlockWithoutBlockItem("multiblock_dummy",
-            properties-> new MultiblockDummyBlock(properties.strength(-1.0f, 3600000.0f).dropsNothing().nonOpaque()));
+            properties-> new MultiblockDummyBlock(properties.strength(-1.0f, 3600000.0f).dropsNothing().replaceable().nonOpaque()));
 
     private static Block registerBlock(String name, Function<AbstractBlock.Settings, Block> function) {
         Block toRegister = function.apply(AbstractBlock.Settings.create().registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(DarkArtsRevival.MOD_ID, name))));

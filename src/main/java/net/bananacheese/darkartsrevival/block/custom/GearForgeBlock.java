@@ -10,18 +10,18 @@ import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -84,10 +84,10 @@ public class GearForgeBlock extends BlockWithEntity {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof GearForgeBlockEntity forgeEntity) {
                 if (forgeEntity.isFormed()) {
-                    // Open GUI
+                    // Open GUI with the block entity's inventory
                     player.openHandledScreen(new SimpleNamedScreenHandlerFactory(
                             (syncId, playerInventory, playerEntity) ->
-                                    new GearForgeScreenHandler(syncId, playerInventory),
+                                    new GearForgeScreenHandler(syncId, playerInventory, forgeEntity),
                             Text.literal("Gear Forge")
                     ));
                 } else {

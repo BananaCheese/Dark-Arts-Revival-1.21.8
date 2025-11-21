@@ -26,11 +26,11 @@ public class DAModelProvider extends FabricModelProvider {
 
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
-        itemModelGenerator.register(DAItems.ALTER_ANALYZER, Models.GENERATED);
+        itemModelGenerator.register(DAItems.ALTER_ANALYZER, Models.HANDHELD);
 
-        itemModelGenerator.register(DAItems.DARK_CRYSTAL, Models.GENERATED);
+        itemModelGenerator.register(DAItems.DARK_CRYSTAL, Models.HANDHELD);
 
-        itemModelGenerator.register(DAItems.GEAR_FORGE_HAMMER, Models.GENERATED);
+        itemModelGenerator.register(DAItems.GEAR_FORGE_HAMMER, Models.HANDHELD);
     }
 
     private void generateConnectedTextureBlock(String blockName, String baseTexture, String activeTexture) {

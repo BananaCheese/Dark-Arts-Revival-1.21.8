@@ -139,18 +139,18 @@ public class GearForgeBlockEntity extends BlockEntity implements Inventory {
 
     private void checkAndFormMultiblock(World world, BlockPos controllerPos) {
         BlockPos[] requiredPositions = {
-                controllerPos.add(-1, -1, -1),
-                controllerPos.add(1, -1, -1),
-                controllerPos.add(-1, -1, 1),
-                controllerPos.add(1, -1, 1),
-                controllerPos.add(-1, -1, 0),
-                controllerPos.add(1, -1, 0),
-                controllerPos.add(0, -1, -1),
-                controllerPos.add(0, -1, 1),
+                controllerPos.add(-1, 0, -1),
+                controllerPos.add(1, 0, -1),
+                controllerPos.add(-1, 0, 1),
+                controllerPos.add(1, 0, 1),
                 controllerPos.add(-1, 0, 0),
                 controllerPos.add(1, 0, 0),
+                controllerPos.add(0, 0, -1),
                 controllerPos.add(0, 0, 1),
-                controllerPos.add(0, 0, -1)
+                controllerPos.add(-1, 1, 1),
+                controllerPos.add(1, 1, -1),
+                controllerPos.add(1, 1, 1),
+                controllerPos.add(-1, 1, -1)
         };
 
         Block[] requiredBlocks = {
@@ -162,10 +162,10 @@ public class GearForgeBlockEntity extends BlockEntity implements Inventory {
                 Blocks.SMOOTH_STONE,
                 Blocks.SMOOTH_STONE,
                 Blocks.SMOOTH_STONE,
-                Blocks.IRON_BARS,
-                Blocks.IRON_BARS,
-                Blocks.IRON_BARS,
-                Blocks.IRON_BARS,
+                Blocks.BLAST_FURNACE,
+                Blocks.ANVIL,
+                Blocks.GRINDSTONE,
+                Blocks.SMITHING_TABLE,
         };
 
         boolean structureValid = true;

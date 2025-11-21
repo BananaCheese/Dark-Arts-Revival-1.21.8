@@ -70,7 +70,38 @@ public class GearForgeHammer extends Item {
             return ActionResult.SUCCESS;
         }
 
+        // Check if clicking on any potential multiblock component to form
+        if (!world.isClient) {
+            BlockPos forgePos = findNearbyGearForge(world, pos);
+            if (forgePos != null && world.getBlockEntity(forgePos) instanceof GearForgeBlockEntity forge) {
+                if (!forge.isFormed()) {
+                    forge.tryFormMultiblock(world, forgePos);
+
+                    if (forge.isFormed()) {
+                        player.sendMessage(Text.literal("Multiblock formed!"), true);
+                        world.playSound(null, forgePos, SoundEvents.BLOCK_ANVIL_USE, SoundCategory.BLOCKS, 1.0f, 1.2f);
+                        return ActionResult.SUCCESS;
+                    }
+                }
+            }
+        }
+
         return ActionResult.PASS;
+    }
+
+    private BlockPos findNearbyGearForge(World world, BlockPos clickedPos) {
+        // Search in a 3x3x3 area for a Gear Forge block
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                for (int z = -1; z <= 1; z++) {
+                    BlockPos checkPos = clickedPos.add(x, y, z);
+                    if (world.getBlockState(checkPos).isOf(DABlocks.GEAR_FORGE_BLOCK)) {
+                        return checkPos;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private BlockPos findMasterBlock(World world, BlockPos dummyPos) {

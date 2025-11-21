@@ -2,6 +2,7 @@
   "format_version": "1.21.6",
   "credit": "Made with Blockbench",
   "parent": "gear_forge_formed",
+  "ambientocclusion": false,
   "texture_size": [256, 256],
   "textures": {
     "0": "darkartsrevival:block/gear_forge_formed",

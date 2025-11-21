@@ -14,7 +14,7 @@ public class MultiblockDummyBlock extends Block {
 
     public MultiblockDummyBlock(Settings settings) {
         // Back to unbreakable - hammer handles forming/unforming
-        super(settings.strength(-1.0f, 3600000.0f).dropsNothing().nonOpaque());
+        super(settings);
     }
 
     @Override

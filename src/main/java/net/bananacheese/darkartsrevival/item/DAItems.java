@@ -16,13 +16,13 @@ import java.util.function.Function;
 public class DAItems {
 
     public static final Item SOUL_SYRINGE = registerItem("soul_syringe",
-            settings -> new SoulSyringe(settings.maxCount(1)));
+            setting -> new SoulSyringe(setting.maxCount(1)));
 
     public static final Item ALTER_ANALYZER = registerItem("alter_analyzer",
-            settings -> new AlterAnalyzer(settings.maxCount(1)));
+            setting -> new AlterAnalyzer(setting.maxCount(1)));
 
     public static final Item GEAR_FORGE_HAMMER = registerItem("gear_forge_hammer",
-            settings -> new GearForgeHammer(settings.maxCount(1).maxDamage(250))); // Durability like IE hammer
+            setting -> new GearForgeHammer(setting.maxCount(1).maxDamage(250))); // Durability like IE hammer
 
     public static final Item DARK_CRYSTAL = registerItem("dark_crystal", Item::new);
 

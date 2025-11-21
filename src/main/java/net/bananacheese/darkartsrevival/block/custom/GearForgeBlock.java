@@ -3,17 +3,20 @@ package net.bananacheese.darkartsrevival.block.custom;
 import com.mojang.serialization.MapCodec;
 import net.bananacheese.darkartsrevival.block.entity.DABlockEntities;
 import net.bananacheese.darkartsrevival.block.entity.custom.GearForgeBlockEntity;
+import net.bananacheese.darkartsrevival.screen.GearForgeScreenHandler;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
@@ -81,9 +84,12 @@ public class GearForgeBlock extends BlockWithEntity {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof GearForgeBlockEntity forgeEntity) {
                 if (forgeEntity.isFormed()) {
-                    // Open GUI here - we'll implement this next
-                    player.sendMessage(net.minecraft.text.Text.literal("Opening Gear Forge GUI..."), false);
-                    // TODO: Open GUI screen here
+                    // Open GUI
+                    player.openHandledScreen(new SimpleNamedScreenHandlerFactory(
+                            (syncId, playerInventory, playerEntity) ->
+                                    new GearForgeScreenHandler(syncId, playerInventory),
+                            Text.literal("Gear Forge")
+                    ));
                 } else {
                     player.sendMessage(net.minecraft.text.Text.literal("Multiblock not formed correctly."), false);
                 }

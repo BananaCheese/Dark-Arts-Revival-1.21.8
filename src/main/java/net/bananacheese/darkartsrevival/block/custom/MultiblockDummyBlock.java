@@ -89,4 +89,9 @@ public class MultiblockDummyBlock extends Block {
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.INVISIBLE;
     }
+
+    @Override
+    public void randomDisplayTick(BlockState state, net.minecraft.world.World world, BlockPos pos, net.minecraft.util.math.random.Random random) {
+        // Prevent particles
+    }
 }

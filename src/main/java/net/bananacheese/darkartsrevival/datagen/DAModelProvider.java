@@ -34,6 +34,7 @@ public class DAModelProvider extends FabricModelProvider {
     private void generateConnectedTextureBlock(String blockName, String baseTexture, String activeTexture) {
         // We'll manually write the JSON files here
         // DataGen doesn't have a built-in way to handle multipart with many conditions
+
     }
 
     /**

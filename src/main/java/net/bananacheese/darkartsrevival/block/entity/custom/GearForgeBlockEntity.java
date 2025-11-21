@@ -1,5 +1,6 @@
 package net.bananacheese.darkartsrevival.block.entity.custom;
 
+import net.bananacheese.darkartsrevival.block.DABlocks;
 import net.bananacheese.darkartsrevival.block.entity.DABlockEntities;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -16,14 +17,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GearForgeBlockEntity extends BlockEntity {
     private boolean isFormed = false;
-    private final List<BlockPos> multiblockPositions = new ArrayList<>();
+    private final Map<BlockPos, BlockState> originalBlocks = new HashMap<>();
     private int checkCooldown = 0;
-    private static final int CHECK_INTERVAL = 20; // Check every second
+    private static final int CHECK_INTERVAL = 40; // Check every 2 seconds
 
     public GearForgeBlockEntity(BlockPos pos, BlockState state) {
         super(DABlockEntities.GEAR_FORGE_BLOCK_ENTITY, pos, state);
@@ -35,58 +36,72 @@ public class GearForgeBlockEntity extends BlockEntity {
         checkCooldown--;
         if (checkCooldown <= 0) {
             checkCooldown = CHECK_INTERVAL;
-            boolean wasFormed = isFormed;
-            checkAndFormMultiblock(world, pos);
 
-            // Sync to client if state changed
-            if (wasFormed != isFormed) {
-                markDirty();
-                world.updateListeners(pos, state, state, Block.NOTIFY_ALL);
+            // Only check if not already formed, or verify structure integrity if formed
+            if (!isFormed) {
+                boolean wasFormed = isFormed;
+                checkAndFormMultiblock(world, pos);
+
+                if (wasFormed != isFormed) {
+                    markDirty();
+                    world.updateListeners(pos, state, state, Block.NOTIFY_ALL);
+                }
+            } else {
+                // Verify structure is still intact
+                if (!verifyStructure(world, pos)) {
+                    unformMultiblock();
+                    markDirty();
+                    world.updateListeners(pos, state, state, Block.NOTIFY_ALL);
+                }
             }
         }
     }
 
+    private boolean verifyStructure(World world, BlockPos controllerPos) {
+        // Check if all dummy blocks are still in place
+        for (BlockPos dummyPos : originalBlocks.keySet()) {
+            if (!world.getBlockState(dummyPos).isOf(DABlocks.MULTIBLOCK_DUMMY)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void checkAndFormMultiblock(World world, BlockPos controllerPos) {
         // Define the multiblock pattern
-        // This is a simple 3x3x2 structure as an example
-        // Adjust positions based on your desired structure
-
         BlockPos[] requiredPositions = {
                 // Bottom layer (Y = 0)
-                controllerPos.add(-1, 0, -1), // Iron blocks in corners
+                controllerPos.add(-1, 0, -1),
                 controllerPos.add(1, 0, -1),
                 controllerPos.add(-1, 0, 1),
                 controllerPos.add(1, 0, 1),
 
-                // Middle positions (optional)
+                // Middle positions
                 controllerPos.add(-1, 0, 0),
                 controllerPos.add(1, 0, 0),
                 controllerPos.add(0, 0, -1),
                 controllerPos.add(0, 0, 1),
 
                 // Top layer (Y = 1)
-                controllerPos.add(0, 1, 0) // Center top - anvil
+                controllerPos.add(0, 1, 0)
         };
 
         Block[] requiredBlocks = {
-                // Bottom layer - iron blocks
                 Blocks.IRON_BLOCK,
                 Blocks.IRON_BLOCK,
                 Blocks.IRON_BLOCK,
                 Blocks.IRON_BLOCK,
 
-                // Middle - smooth stone
                 Blocks.SMOOTH_STONE,
                 Blocks.SMOOTH_STONE,
                 Blocks.SMOOTH_STONE,
                 Blocks.SMOOTH_STONE,
 
-                // Top - anvil
                 Blocks.ANVIL
         };
 
         boolean structureValid = true;
-        List<BlockPos> tempPositions = new ArrayList<>();
+        Map<BlockPos, BlockState> tempOriginalBlocks = new HashMap<>();
 
         // Check all required blocks
         for (int i = 0; i < requiredPositions.length; i++) {
@@ -95,25 +110,40 @@ public class GearForgeBlockEntity extends BlockEntity {
                 structureValid = false;
                 break;
             }
-            tempPositions.add(requiredPositions[i]);
+            tempOriginalBlocks.put(requiredPositions[i].toImmutable(), state);
         }
 
         if (structureValid && !isFormed) {
             // Form the multiblock
             isFormed = true;
-            multiblockPositions.clear();
-            multiblockPositions.addAll(tempPositions);
+            originalBlocks.clear();
+            originalBlocks.putAll(tempOriginalBlocks);
+
+            // Replace all blocks with dummy blocks
+            for (BlockPos targetPos : requiredPositions) {
+                world.setBlockState(targetPos, DABlocks.MULTIBLOCK_DUMMY.getDefaultState(), 3);
+            }
+
             markDirty();
-        } else if (!structureValid && isFormed) {
-            // Unform the multiblock
-            unformMultiblock();
         }
     }
 
     public void unformMultiblock() {
-        if (isFormed) {
+        if (isFormed && world != null) {
             isFormed = false;
-            multiblockPositions.clear();
+
+            // Restore original blocks
+            for (Map.Entry<BlockPos, BlockState> entry : originalBlocks.entrySet()) {
+                BlockPos targetPos = entry.getKey();
+                BlockState originalState = entry.getValue();
+
+                // Only restore if it's still a dummy block
+                if (world.getBlockState(targetPos).isOf(DABlocks.MULTIBLOCK_DUMMY)) {
+                    world.setBlockState(targetPos, originalState, 3);
+                }
+            }
+
+            originalBlocks.clear();
             markDirty();
         }
     }
@@ -122,29 +152,40 @@ public class GearForgeBlockEntity extends BlockEntity {
         return isFormed;
     }
 
-    protected void readNbt(ReadView view) {
-        super.readData(view);
-        isFormed = view.getBoolean("IsFormed", true);
+    public boolean isDummyPartOfMultiblock(BlockPos dummyPos) {
+        return originalBlocks.containsKey(dummyPos);
+    }
 
-        // Read multiblock positions if needed for more complex structures
-        if (view.contains("MultiblockSize")) {
-            int size = view.getInt("MultiblockSize", 2);
-            multiblockPositions.clear();
-            for (int i = 0; i < size; i++) {
-                long posLong = view.getLong("Pos" + i, 0);
-                multiblockPositions.add(BlockPos.fromLong(posLong));
+    @Override
+    protected void readData(ReadView view) {
+        super.readData(view);
+        isFormed = view.getBoolean("IsFormed", false);
+
+        // Read original blocks
+        originalBlocks.clear();
+        if (view.contains("OriginalBlocksCount")) {
+            int count = view.getInt("OriginalBlocksCount", 0);
+            for (int i = 0; i < count; i++) {
+                long posLong = view.getLong("BlockPos" + i, 0);
+                if (posLong != 0) {
+                    BlockPos pos = BlockPos.fromLong(posLong);
+                    originalBlocks.put(pos, Blocks.AIR.getDefaultState());
+                }
             }
         }
     }
 
-    protected void writeNbt(WriteView view) {
+    @Override
+    protected void writeData(WriteView view) {
         super.writeData(view);
         view.putBoolean("IsFormed", isFormed);
 
-        // Save multiblock positions
-        view.putInt("MultiblockSize", multiblockPositions.size());
-        for (int i = 0; i < multiblockPositions.size(); i++) {
-            view.putLong("Pos" + i, multiblockPositions.get(i).asLong());
+        // Save original blocks
+        view.putInt("OriginalBlocksCount", originalBlocks.size());
+        int index = 0;
+        for (Map.Entry<BlockPos, BlockState> entry : originalBlocks.entrySet()) {
+            view.putLong("BlockPos" + index, entry.getKey().asLong());
+            index++;
         }
     }
 
@@ -154,6 +195,7 @@ public class GearForgeBlockEntity extends BlockEntity {
         return BlockEntityUpdateS2CPacket.create(this);
     }
 
+    @Override
     public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
         return createNbt(registryLookup);
     }

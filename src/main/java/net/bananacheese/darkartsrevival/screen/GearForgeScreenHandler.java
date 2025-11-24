@@ -1,5 +1,6 @@
 package net.bananacheese.darkartsrevival.screen;
 
+import net.bananacheese.darkartsrevival.screen.slot.GearForgeSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -30,16 +31,16 @@ public class GearForgeScreenHandler extends ScreenHandler {
 
         // Gear Forge Hexagon Slots
 
-        // Center slot - Core armor/tool piece
-        this.addSlot(new Slot(inventory, CORE_SLOT, 113, 38));
+        // Center slot - Core armor/tool piece (ONLY accepts ArmorCoreItem)
+        this.addSlot(new GearForgeSlot(inventory, CORE_SLOT, 113, 38, GearForgeSlot.SlotType.CORE));
 
-        // Surrounding upgrade slots (hexagon pattern)
-        this.addSlot(new Slot(inventory, 1, 101, 17));  // Top-left
-        this.addSlot(new Slot(inventory, 2, 125, 17));  // Top-right
-        this.addSlot(new Slot(inventory, 3, 89, 38));   // Middle-left
-        this.addSlot(new Slot(inventory, 4, 137, 38));  // Middle-right
-        this.addSlot(new Slot(inventory, 5, 101, 59));  // Bottom-left
-        this.addSlot(new Slot(inventory, 6, 125, 59));  // Bottom-right
+        // Surrounding upgrade slots (hexagon pattern) - ONLY accept compatible components
+        this.addSlot(new GearForgeSlot(inventory, 1, 101, 17, GearForgeSlot.SlotType.COMPONENT));  // Top-left
+        this.addSlot(new GearForgeSlot(inventory, 2, 125, 17, GearForgeSlot.SlotType.COMPONENT));  // Top-right
+        this.addSlot(new GearForgeSlot(inventory, 3, 89, 38, GearForgeSlot.SlotType.COMPONENT));   // Middle-left
+        this.addSlot(new GearForgeSlot(inventory, 4, 137, 38, GearForgeSlot.SlotType.COMPONENT));  // Middle-right
+        this.addSlot(new GearForgeSlot(inventory, 5, 101, 59, GearForgeSlot.SlotType.COMPONENT));  // Bottom-left
+        this.addSlot(new GearForgeSlot(inventory, 6, 125, 59, GearForgeSlot.SlotType.COMPONENT));  // Bottom-right
 
         // Player Inventory (3x9) - same as loom
         for (int row = 0; row < 3; ++row) {

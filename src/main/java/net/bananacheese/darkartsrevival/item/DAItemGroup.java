@@ -31,6 +31,16 @@ public class DAItemGroup {
 
                         entries.add(DAItems.DARK_CRYSTAL);
 
+                        entries.add(DAItems.HELMET_CORE);
+                        entries.add(DAItems.CHESTPLATE_CORE);
+                        entries.add(DAItems.LEGGINGS_CORE);
+                        entries.add(DAItems.BOOTS_CORE);
+
+                        entries.add(DAItems.IRON_PAULDRONS);
+                        entries.add(DAItems.IRON_FAULD);
+                        entries.add(DAItems.IRON_GORGET);
+                        entries.add(DAItems.STEEL_REINFORCEMENT);
+
                     }).build());
 
     public static void registerItemGroups() {

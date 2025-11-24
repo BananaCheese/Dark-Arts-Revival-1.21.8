@@ -15,5 +15,15 @@
 
   "item.darkartsrevival.gear_forge_hammer": "Gear Forge Hammer",
 
-  "item.darkartsrevival.dark_crystal": "Dark Crystal"
+  "item.darkartsrevival.dark_crystal": "Dark Crystal",
+
+  "item.darkartsrevival.helmet_core": "Helmet Core",
+  "item.darkartsrevival.chestplate_core": "Chestplate Core",
+  "item.darkartsrevival.leggings_core": "Leggings Core",
+  "item.darkartsrevival.boots_core": "Boots Core",
+
+  "item.darkartsrevival.iron_pauldrons": "Iron Pauldrons",
+  "item.darkartsrevival.iron_fauld": "Iron Fauld",
+  "item.darkartsrevival.iron_gorget": "Iron Gorget",
+  "item.darkartsrevival.steel_reinforcement": "Steel Reinforcement"
 }

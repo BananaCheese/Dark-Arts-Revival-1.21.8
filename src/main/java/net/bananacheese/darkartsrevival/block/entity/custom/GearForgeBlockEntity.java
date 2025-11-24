@@ -25,7 +25,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GearForgeBlockEntity extends BlockEntity implements Inventory {
@@ -34,14 +36,12 @@ public class GearForgeBlockEntity extends BlockEntity implements Inventory {
     private int checkCooldown = 0;
     private static final int CHECK_INTERVAL = 40;
 
-    // Inventory for the GUI (7 slots: 1 core + 6 upgrades)
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(7, ItemStack.EMPTY);
 
     public GearForgeBlockEntity(BlockPos pos, BlockState state) {
         super(DABlockEntities.GEAR_FORGE_BLOCK_ENTITY, pos, state);
     }
 
-    // Inventory Implementation
     @Override
     public int size() {
         return inventory.size();
@@ -101,13 +101,10 @@ public class GearForgeBlockEntity extends BlockEntity implements Inventory {
     public void tick(World world, BlockPos pos, BlockState state) {
         if (world.isClient) return;
 
-        // Remove automatic checking - now only forms via hammer
-        // Keep the structure verification though
         checkCooldown--;
         if (checkCooldown <= 0 && isFormed) {
             checkCooldown = CHECK_INTERVAL;
 
-            // Only verify structure if already formed
             if (!verifyStructure(world, pos)) {
                 unformMultiblock();
                 markDirty();
@@ -116,7 +113,6 @@ public class GearForgeBlockEntity extends BlockEntity implements Inventory {
         }
     }
 
-    // New public method for hammer to call
     public void tryFormMultiblock(World world, BlockPos pos) {
         if (!isFormed) {
             checkAndFormMultiblock(world, pos);
@@ -138,46 +134,80 @@ public class GearForgeBlockEntity extends BlockEntity implements Inventory {
     }
 
     private void checkAndFormMultiblock(World world, BlockPos controllerPos) {
-        BlockPos[] requiredPositions = {
+        // Bottom layer corners (must be crying obsidian)
+        BlockPos[] bottomCorners = {
                 controllerPos.add(-1, 0, -1),
                 controllerPos.add(1, 0, -1),
                 controllerPos.add(-1, 0, 1),
-                controllerPos.add(1, 0, 1),
+                controllerPos.add(1, 0, 1)
+        };
+
+        // Bottom layer sides (must be smooth stone)
+        BlockPos[] bottomSides = {
                 controllerPos.add(-1, 0, 0),
                 controllerPos.add(1, 0, 0),
                 controllerPos.add(0, 0, -1),
-                controllerPos.add(0, 0, 1),
-                controllerPos.add(-1, 1, 1),
-                controllerPos.add(1, 1, -1),
+                controllerPos.add(0, 0, 1)
+        };
+
+        // Top layer corners (can be any of the 4 required blocks)
+        BlockPos[] topCorners = {
                 controllerPos.add(1, 1, 1),
+                controllerPos.add(1, 1, -1),
+                controllerPos.add(-1, 1, 1),
                 controllerPos.add(-1, 1, -1)
         };
 
-        Block[] requiredBlocks = {
-                Blocks.IRON_BLOCK,
-                Blocks.IRON_BLOCK,
-                Blocks.IRON_BLOCK,
-                Blocks.IRON_BLOCK,
-                Blocks.SMOOTH_STONE,
-                Blocks.SMOOTH_STONE,
-                Blocks.SMOOTH_STONE,
-                Blocks.SMOOTH_STONE,
-                Blocks.BLAST_FURNACE,
+        // Required blocks for top corners (order doesn't matter)
+        Block[] requiredTopBlocks = {
                 Blocks.ANVIL,
                 Blocks.GRINDSTONE,
                 Blocks.SMITHING_TABLE,
+                Blocks.BLAST_FURNACE
         };
 
         boolean structureValid = true;
         Map<BlockPos, BlockState> tempOriginalBlocks = new HashMap<>();
 
-        for (int i = 0; i < requiredPositions.length; i++) {
-            BlockState state = world.getBlockState(requiredPositions[i]);
-            if (!state.isOf(requiredBlocks[i])) {
+        // Check bottom corners (must be crying obsidian)
+        for (BlockPos cornerPos : bottomCorners) {
+            BlockState state = world.getBlockState(cornerPos);
+            if (!state.isOf(Blocks.CRYING_OBSIDIAN)) {
                 structureValid = false;
                 break;
             }
-            tempOriginalBlocks.put(requiredPositions[i].toImmutable(), state);
+            tempOriginalBlocks.put(cornerPos.toImmutable(), state);
+        }
+
+        // Check bottom sides (must be smooth stone)
+        if (structureValid) {
+            for (BlockPos sidePos : bottomSides) {
+                BlockState state = world.getBlockState(sidePos);
+                if (!state.isOf(Blocks.SMOOTH_STONE)) {
+                    structureValid = false;
+                    break;
+                }
+                tempOriginalBlocks.put(sidePos.toImmutable(), state);
+            }
+        }
+
+        // Check top corners (must have all 4 required blocks in any order)
+        if (structureValid) {
+            List<Block> foundBlocks = new ArrayList<>();
+            for (BlockPos cornerPos : topCorners) {
+                BlockState state = world.getBlockState(cornerPos);
+                Block block = state.getBlock();
+                foundBlocks.add(block);
+                tempOriginalBlocks.put(cornerPos.toImmutable(), state);
+            }
+
+            // Verify all 4 required blocks are present
+            for (Block requiredBlock : requiredTopBlocks) {
+                if (!foundBlocks.contains(requiredBlock)) {
+                    structureValid = false;
+                    break;
+                }
+            }
         }
 
         if (structureValid && !isFormed) {
@@ -185,7 +215,7 @@ public class GearForgeBlockEntity extends BlockEntity implements Inventory {
             originalBlocks.clear();
             originalBlocks.putAll(tempOriginalBlocks);
 
-            for (BlockPos targetPos : requiredPositions) {
+            for (BlockPos targetPos : tempOriginalBlocks.keySet()) {
                 world.setBlockState(targetPos, DABlocks.MULTIBLOCK_DUMMY.getDefaultState(), 3);
             }
 
@@ -228,7 +258,6 @@ public class GearForgeBlockEntity extends BlockEntity implements Inventory {
         super.readData(view);
         isFormed = view.getBoolean("IsFormed", false);
 
-        // Read inventory - use ComponentMap approach
         inventory.clear();
         int inventorySize = view.getInt("InventorySize", 0);
         for (int i = 0; i < inventorySize && i < inventory.size(); i++) {
@@ -244,7 +273,6 @@ public class GearForgeBlockEntity extends BlockEntity implements Inventory {
             }
         }
 
-        // Read original blocks with actual block states
         originalBlocks.clear();
         if (view.contains("OriginalBlocksCount")) {
             int count = view.getInt("OriginalBlocksCount", 0);
@@ -265,7 +293,6 @@ public class GearForgeBlockEntity extends BlockEntity implements Inventory {
         super.writeData(view);
         view.putBoolean("IsFormed", isFormed);
 
-        // Save inventory - save item IDs and counts
         int nonEmptySlots = 0;
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stack = inventory.get(i);
@@ -278,7 +305,6 @@ public class GearForgeBlockEntity extends BlockEntity implements Inventory {
         }
         view.putInt("InventorySize", nonEmptySlots);
 
-        // Save original blocks with their actual block types
         view.putInt("OriginalBlocksCount", originalBlocks.size());
         int index = 0;
         for (Map.Entry<BlockPos, BlockState> entry : originalBlocks.entrySet()) {

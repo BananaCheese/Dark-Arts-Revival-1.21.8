@@ -31,6 +31,16 @@ public class DAModelProvider extends FabricModelProvider {
         itemModelGenerator.register(DAItems.DARK_CRYSTAL, Models.HANDHELD);
 
         itemModelGenerator.register(DAItems.GEAR_FORGE_HAMMER, Models.HANDHELD);
+
+        itemModelGenerator.register(DAItems.HELMET_CORE, Models.HANDHELD);
+        itemModelGenerator.register(DAItems.CHESTPLATE_CORE, Models.HANDHELD);
+        itemModelGenerator.register(DAItems.LEGGINGS_CORE, Models.HANDHELD);
+        itemModelGenerator.register(DAItems.BOOTS_CORE, Models.HANDHELD);
+
+        itemModelGenerator.register(DAItems.IRON_PAULDRONS, Models.HANDHELD);
+        itemModelGenerator.register(DAItems.IRON_FAULD, Models.HANDHELD);
+        itemModelGenerator.register(DAItems.IRON_GORGET, Models.HANDHELD);
+        itemModelGenerator.register(DAItems.STEEL_REINFORCEMENT, Models.HANDHELD);
     }
 
     private void generateConnectedTextureBlock(String blockName, String baseTexture, String activeTexture) {

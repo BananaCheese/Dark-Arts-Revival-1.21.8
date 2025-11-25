@@ -1,11 +1,6 @@
 package net.bananacheese.darkartsrevival.item.custom;
 
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.text.Text;
-
-import java.util.List;
 
 public class ArmorComponentItem extends Item {
     private final ComponentType componentType;
@@ -29,17 +24,6 @@ public class ArmorComponentItem extends Item {
 
     public int getDurabilityBonus() {
         return durabilityBonus;
-    }
-
-    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
-        tooltip.add(Text.literal("§9" + componentType.getDisplayName()));
-        if (defenseBonus > 0) {
-            tooltip.add(Text.literal("§a+%d Defense".formatted(defenseBonus)));
-        }
-        if (durabilityBonus > 0) {
-            tooltip.add(Text.literal("§a+%d Durability".formatted(durabilityBonus)));
-        }
-        tooltip.add(Text.literal("§8Compatible: " + componentType.getCompatibility()));
     }
 
     public enum ComponentType {

@@ -8,6 +8,8 @@ import net.bananacheese.darkartsrevival.component.DAComponents;
 import net.bananacheese.darkartsrevival.event.PlayerDeathHandler;
 import net.bananacheese.darkartsrevival.item.DAItemGroup;
 import net.bananacheese.darkartsrevival.item.DAItems;
+import net.bananacheese.darkartsrevival.item.custom.ArmorComponentItem;
+import net.bananacheese.darkartsrevival.item.custom.ArmorCoreItem;
 import net.bananacheese.darkartsrevival.item.custom.SoulSyringe;
 import net.bananacheese.darkartsrevival.recipe.DARecipes;
 import net.fabricmc.api.ModInitializer;
@@ -61,6 +63,31 @@ public class DarkArtsRevival implements ModInitializer {
                     lines.add(Text.literal("§aFully Charged!"));
                     lines.add(Text.literal("§7Use on an altar to revive"));
                 }
+            }
+        });
+
+        // Register tooltip for Armor Cores
+        ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, lines) -> {
+            if (stack.getItem() instanceof ArmorCoreItem coreItem) {
+                lines.add(Text.literal("§7" + coreItem.getCoreType().getDisplayName() + " Core"));
+                lines.add(Text.literal("§8Place in Gear Forge to customize"));
+            }
+        });
+
+// Register tooltip for Armor Components
+        ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, lines) -> {
+            if (stack.getItem() instanceof ArmorComponentItem component) {
+                lines.add(Text.literal("§9" + component.getComponentType().getDisplayName()));
+
+                if (component.getDefenseBonus() > 0) {
+                    lines.add(Text.literal("§a+%d Defense".formatted(component.getDefenseBonus())));
+                }
+
+                if (component.getDurabilityBonus() > 0) {
+                    lines.add(Text.literal("§a+%d Durability".formatted(component.getDurabilityBonus())));
+                }
+
+                lines.add(Text.literal("§8Compatible: " + component.getComponentType().getCompatibility()));
             }
         });
     }

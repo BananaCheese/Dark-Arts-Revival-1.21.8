@@ -1,11 +1,6 @@
 package net.bananacheese.darkartsrevival.item.custom;
 
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.text.Text;
-
-import java.util.List;
 
 public class ArmorCoreItem extends Item {
     private final ArmorCoreType coreType;
@@ -17,11 +12,6 @@ public class ArmorCoreItem extends Item {
 
     public ArmorCoreType getCoreType() {
         return coreType;
-    }
-
-    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
-        tooltip.add(Text.literal("§7" + coreType.getDisplayName() + " Core"));
-        tooltip.add(Text.literal("§8Place in Gear Forge to customize"));
     }
 
     public enum ArmorCoreType {

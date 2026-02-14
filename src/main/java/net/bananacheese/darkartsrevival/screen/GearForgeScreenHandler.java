@@ -18,6 +18,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
@@ -63,33 +64,41 @@ public class GearForgeScreenHandler extends ScreenHandler {
 
     @Override
     public void onSlotClick(int slotIndex, int button, SlotActionType actionType, PlayerEntity player) {
+        // Check state BEFORE the click
+        ItemStack frameBeforeClick = inventory.getStack(FRAME_SLOT).copy();
+        boolean hadFrameBefore = frameBeforeClick.getItem() instanceof ArmorFrameItem;
+
         super.onSlotClick(slotIndex, button, actionType, player);
 
-        // After any slot click, check if we need to update the frame
-        ItemStack frameStack = inventory.getStack(FRAME_SLOT);
+        // Check state AFTER the click
+        ItemStack frameAfterClick = inventory.getStack(FRAME_SLOT);
+        boolean hasFrameAfter = frameAfterClick.getItem() instanceof ArmorFrameItem;
 
-        if (frameStack.getItem() instanceof ArmorFrameItem) {
-            // If clicking on the frame slot itself
-            if (slotIndex == FRAME_SLOT) {
-                // If frame was just placed, sync components FROM frame TO slots
-                syncFrameWithComponents();
+        // Case 1: Frame was just placed
+        if (!hadFrameBefore && hasFrameAfter) {
+            // Load existing components from frame into slots
+            syncFrameWithComponents();
+        }
+        // Case 2: Frame was removed manually (picked up with mouse)
+        else if (hadFrameBefore && !hasFrameAfter && slotIndex == FRAME_SLOT) {
+            // Save components to the frame BEFORE it's taken
+            saveComponentsToFrameAndConsume(frameBeforeClick, player);
+
+            // Clear component slots (they were consumed into the frame or returned to player)
+            for (int i = 1; i <= 6; i++) {
+                inventory.setStack(i, ItemStack.EMPTY);
             }
-            // If clicking on any component slot (slots 1-6)
-            else if (slotIndex >= UPGRADE_SLOTS_START && slotIndex < INVENTORY_START) {
-                // Component was added or removed, save current state to frame
-                saveComponentsToFrameRealtime();
+
+            // Replace cursor with our updated frame
+            ItemStack cursorStack = getCursorStack();
+            if (cursorStack.getItem() instanceof ArmorFrameItem) {
+                setCursorStack(frameBeforeClick);
             }
         }
-        // If the frame was removed, return components to player
-        else if (slotIndex == FRAME_SLOT && frameStack.isEmpty()) {
-            // Frame was removed, return all components to player
-            for (int i = 1; i <= 6; i++) {
-                ItemStack componentStack = inventory.getStack(i);
-                if (!componentStack.isEmpty()) {
-                    player.getInventory().offerOrDrop(componentStack);
-                    inventory.setStack(i, ItemStack.EMPTY);
-                }
-            }
+        // Case 3: Component was added/removed (frame still present)
+        else if (hasFrameAfter && slotIndex >= UPGRADE_SLOTS_START && slotIndex < INVENTORY_START) {
+            // Update frame stats in real-time
+            updateFrameStatsPreview(player);
         }
     }
 
@@ -106,7 +115,7 @@ public class GearForgeScreenHandler extends ScreenHandler {
                     if (itemId != null) {
                         Item item = Registries.ITEM.get(itemId);
                         if (item instanceof ArmorComponentItem) {
-                            inventory.setStack(i + 1, new ItemStack(item));
+                            inventory.setStack(i + 1, new ItemStack(item, 1));
                         }
                     }
                 } else {
@@ -116,46 +125,55 @@ public class GearForgeScreenHandler extends ScreenHandler {
         }
     }
 
-    /**
-     * Saves components to frame in real-time WITHOUT consuming them
-     * This updates the frame's stats as you add/remove components
-     */
-    private void saveComponentsToFrameRealtime() {
+    private void updateFrameStatsPreview(PlayerEntity player) {
         ItemStack frameStack = inventory.getStack(FRAME_SLOT);
         if (frameStack.isEmpty() || !(frameStack.getItem() instanceof ArmorFrameItem)) {
             return;
         }
 
-        // Clear existing components
+        // Clear existing components from frame
         NbtCompound nbt = new NbtCompound();
         nbt.put("Components", new NbtList());
         frameStack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
 
-        // Add current components from slots WITHOUT consuming them
+        // Add current components from slots (just for preview stats)
+        boolean hadDuplicate = false;
         for (int i = 1; i <= 6; i++) {
             ItemStack componentStack = inventory.getStack(i);
             if (componentStack.getItem() instanceof ArmorComponentItem component) {
                 String componentId = Registries.ITEM.getId(componentStack.getItem()).toString();
-                ArmorFrameItem.addComponent(
+                boolean added = ArmorFrameItem.addComponent(
                         frameStack,
                         componentId,
+                        component.getComponentGroup(),
                         component.getDefenseBonus(),
-                        component.getDurabilityBonus()
+                        component.getDurabilityBonus(),
+                        component.getToughnessBonus()
                 );
-                // DON'T consume here - only preview the stats
+
+                // If not added, it's a duplicate group
+                if (!added) {
+                    hadDuplicate = true;
+                }
             }
+        }
+
+        // Notify player if duplicate was detected
+        if (hadDuplicate && player != null) {
+            player.sendMessage(Text.literal("§cCannot add duplicate component types!"), true);
         }
 
         // Update the armor's attribute modifiers
         ArmorFrameAttributeModifiers.updateAttributes(frameStack);
+        inventory.markDirty();
     }
 
     /**
-     * Final save when closing - this consumes the components
+     * Save components to frame and consume them.
+     * Returns any duplicate/rejected components to the player.
      */
-    private void saveComponentsToFrameAndConsume() {
-        ItemStack frameStack = inventory.getStack(FRAME_SLOT);
-        if (frameStack.isEmpty() || !(frameStack.getItem() instanceof ArmorFrameItem)) {
+    private void saveComponentsToFrameAndConsume(ItemStack frameStack, PlayerEntity player) {
+        if (!(frameStack.getItem() instanceof ArmorFrameItem)) {
             return;
         }
 
@@ -164,19 +182,43 @@ public class GearForgeScreenHandler extends ScreenHandler {
         nbt.put("Components", new NbtList());
         frameStack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
 
-        // Add new components from slots and CONSUME them
+        // Track which components were successfully added
+        boolean[] addedSuccessfully = new boolean[6];
+
+        // Try to add new components from slots
         for (int i = 1; i <= 6; i++) {
             ItemStack componentStack = inventory.getStack(i);
             if (componentStack.getItem() instanceof ArmorComponentItem component) {
                 String componentId = Registries.ITEM.getId(componentStack.getItem()).toString();
-                ArmorFrameItem.addComponent(
+                boolean added = ArmorFrameItem.addComponent(
                         frameStack,
                         componentId,
+                        component.getComponentGroup(),
                         component.getDefenseBonus(),
-                        component.getDurabilityBonus()
+                        component.getDurabilityBonus(),
+                        component.getToughnessBonus()
                 );
-                // CONSUME the component item
-                componentStack.decrement(1);
+
+                addedSuccessfully[i - 1] = added;
+
+                if (added) {
+                    // Component was successfully added, consume it
+                    inventory.setStack(i, ItemStack.EMPTY);
+                } else {
+                    // Component was rejected (duplicate), return it to player
+                    ItemStack rejected = componentStack.copy();
+                    inventory.setStack(i, ItemStack.EMPTY); // Clear the slot
+
+                    // Try to add to player inventory, or drop if full
+                    if (!player.getInventory().insertStack(rejected)) {
+                        player.dropItem(rejected, false);
+                    }
+
+                    // Notify player
+                    player.sendMessage(Text.literal("§eComponent rejected: " +
+                            component.getComponentType().getDisplayName() +
+                            " (duplicate type)"), true);
+                }
             }
         }
 
@@ -197,12 +239,7 @@ public class GearForgeScreenHandler extends ScreenHandler {
                 // Moving from forge to inventory
                 if (invSlot == FRAME_SLOT) {
                     // Shift-clicking frame out - save and consume components first
-                    saveComponentsToFrameAndConsume();
-
-                    // Clear component slots since they were consumed
-                    for (int i = 1; i <= 6; i++) {
-                        inventory.setStack(i, ItemStack.EMPTY);
-                    }
+                    saveComponentsToFrameAndConsume(originalStack, player);
                 }
 
                 if (!this.insertItem(originalStack, INVENTORY_START, this.slots.size(), true)) {
@@ -210,10 +247,22 @@ public class GearForgeScreenHandler extends ScreenHandler {
                 }
             } else {
                 // Moving from inventory to forge
+                boolean wasInserted = false;
+
                 if (!this.insertItem(originalStack, FRAME_SLOT, FRAME_SLOT + 1, false)) {
-                    if (!this.insertItem(originalStack, UPGRADE_SLOTS_START, INVENTORY_START, false)) {
-                        return ItemStack.EMPTY;
+                    if (this.insertItem(originalStack, UPGRADE_SLOTS_START, INVENTORY_START, false)) {
+                        wasInserted = true;
+                        // Component was shift-clicked into a slot, update frame preview
+                        updateFrameStatsPreview(player);
                     }
+                } else {
+                    // Frame was shift-clicked in
+                    wasInserted = true;
+                    syncFrameWithComponents();
+                }
+
+                if (!wasInserted) {
+                    return ItemStack.EMPTY;
                 }
             }
 
@@ -236,10 +285,14 @@ public class GearForgeScreenHandler extends ScreenHandler {
     public void onClosed(PlayerEntity player) {
         super.onClosed(player);
 
-        // Save components to frame and consume them when GUI closes
-        saveComponentsToFrameAndConsume();
+        ItemStack frameStack = inventory.getStack(FRAME_SLOT);
 
-        // Drop any remaining items (frame and any empty component slots)
+        // If there's a frame with components, save and consume them (returning duplicates)
+        if (frameStack.getItem() instanceof ArmorFrameItem) {
+            saveComponentsToFrameAndConsume(frameStack, player);
+        }
+
+        // Drop all remaining items to player
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stack = inventory.getStack(i);
             if (!stack.isEmpty()) {

@@ -73,18 +73,20 @@ public class DarkArtsRevival implements ModInitializer {
             }
         });
 
-        // Register tooltip for Armor Cores - ENHANCED VERSION
+        // Register tooltip for Armor Frames - ENHANCED VERSION with Toughness
         ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, lines) -> {
-            if (stack.getItem() instanceof ArmorFrameItem coreItem) {
-                lines.add(Text.literal("§7" + coreItem.getFrameType().getDisplayName() + " Core"));
+            if (stack.getItem() instanceof ArmorFrameItem frameItem) {
+                lines.add(Text.literal("§7" + frameItem.getFrameType().getDisplayName() + " Frame"));
                 lines.add(Text.literal("§8Place in Gear Forge to customize"));
 
                 // Show total stats
                 int totalDefense = ArmorFrameItem.getTotalDefense(stack);
                 int totalDurability = ArmorFrameItem.getTotalDurability(stack);
+                double totalToughness = ArmorFrameItem.getTotalToughness(stack);
 
                 lines.add(Text.literal(""));
                 lines.add(Text.literal("Defense: " + totalDefense).formatted(Formatting.BLUE));
+                lines.add(Text.literal("Toughness: " + String.format("%.1f", totalToughness)).formatted(Formatting.AQUA));
                 lines.add(Text.literal("Durability: " + totalDurability).formatted(Formatting.GREEN));
 
                 // Show attached components
@@ -95,7 +97,29 @@ public class DarkArtsRevival implements ModInitializer {
                     for (ArmorFrameItem.ComponentData comp : components) {
                         String componentName = comp.id().substring(comp.id().lastIndexOf(':') + 1)
                                 .replace('_', ' ');
-                        lines.add(Text.literal("  • " + componentName).formatted(Formatting.GRAY));
+
+                        // Build component description
+                        StringBuilder compDesc = new StringBuilder("  • " + componentName);
+                        if (comp.defenseBonus() > 0 || comp.toughnessBonus() > 0 || comp.durabilityBonus() > 0) {
+                            compDesc.append(" (");
+                            boolean first = true;
+                            if (comp.defenseBonus() > 0) {
+                                compDesc.append("+").append(comp.defenseBonus()).append(" def");
+                                first = false;
+                            }
+                            if (comp.toughnessBonus() > 0) {
+                                if (!first) compDesc.append(", ");
+                                compDesc.append("+").append(String.format("%.1f", comp.toughnessBonus())).append(" tough");
+                                first = false;
+                            }
+                            if (comp.durabilityBonus() > 0) {
+                                if (!first) compDesc.append(", ");
+                                compDesc.append("+").append(comp.durabilityBonus()).append(" dur");
+                            }
+                            compDesc.append(")");
+                        }
+
+                        lines.add(Text.literal(compDesc.toString()).formatted(Formatting.GRAY));
                     }
                 }
 
@@ -105,7 +129,7 @@ public class DarkArtsRevival implements ModInitializer {
             }
         });
 
-        // Register tooltip for Armor Components
+        // Register tooltip for Armor Components - with Toughness display
         ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, lines) -> {
             if (stack.getItem() instanceof ArmorComponentItem component) {
                 lines.add(Text.literal("§9" + component.getComponentType().getDisplayName()));
@@ -114,11 +138,16 @@ public class DarkArtsRevival implements ModInitializer {
                     lines.add(Text.literal("§a+%d Defense".formatted(component.getDefenseBonus())));
                 }
 
+                if (component.getToughnessBonus() > 0) {
+                    lines.add(Text.literal("§b+%.1f Toughness".formatted(component.getToughnessBonus())));
+                }
+
                 if (component.getDurabilityBonus() > 0) {
                     lines.add(Text.literal("§a+%d Durability".formatted(component.getDurabilityBonus())));
                 }
 
                 lines.add(Text.literal("§8Compatible: " + component.getComponentType().getCompatibility()));
+                lines.add(Text.literal("§8Group: " + component.getComponentGroup()));
             }
         });
     }

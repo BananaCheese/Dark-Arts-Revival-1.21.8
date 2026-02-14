@@ -15,31 +15,34 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ArmorFrameItem extends Item {
-    private final ArmorFrameType FrameType;
+    private final ArmorFrameType frameType;
     private static final int BASE_DEFENSE = 2;
     private static final int BASE_DURABILITY = 100;
+    private static final double BASE_TOUGHNESS = 0.0;
 
-    public ArmorFrameItem(Item.Settings settings, ArmorFrameType FrameType) {
+    public ArmorFrameItem(Item.Settings settings, ArmorFrameType frameType) {
         super(settings
                 // Make it equippable in the proper slot
-                .component(DataComponentTypes.EQUIPPABLE, EquippableComponent.builder(FrameType.getSlot()).build())
+                .component(DataComponentTypes.EQUIPPABLE, EquippableComponent.builder(frameType.getSlot()).build())
                 // Set max damage
                 .maxDamage(BASE_DURABILITY)
                 // Set base armor attributes
-                .component(DataComponentTypes.ATTRIBUTE_MODIFIERS, createBaseAttributes(FrameType))
+                .component(DataComponentTypes.ATTRIBUTE_MODIFIERS, createBaseAttributes(frameType))
         );
-        this.FrameType = FrameType;
+        this.frameType = frameType;
     }
 
     /**
      * Creates the base attribute modifiers for the armor frame
      */
-    private static AttributeModifiersComponent createBaseAttributes(ArmorFrameType FrameType) {
+    private static AttributeModifiersComponent createBaseAttributes(ArmorFrameType frameType) {
         List<AttributeModifiersComponent.Entry> modifiers = new ArrayList<>();
-        EquipmentSlot slot = FrameType.getSlot();
+        EquipmentSlot slot = frameType.getSlot();
         AttributeModifierSlot modifierSlot = AttributeModifierSlot.forEquipmentSlot(slot);
 
         // Create unique identifiers for each slot
@@ -58,12 +61,11 @@ public class ArmorFrameItem extends Item {
         ));
 
         // Add base toughness modifier
-        double toughness = BASE_DEFENSE * 0.2;
         modifiers.add(new AttributeModifiersComponent.Entry(
                 EntityAttributes.ARMOR_TOUGHNESS,
                 new EntityAttributeModifier(
                         toughnessId,
-                        toughness,
+                        BASE_TOUGHNESS,
                         EntityAttributeModifier.Operation.ADD_VALUE
                 ),
                 modifierSlot
@@ -73,11 +75,15 @@ public class ArmorFrameItem extends Item {
     }
 
     public ArmorFrameType getFrameType() {
-        return FrameType;
+        return frameType;
     }
 
-    // Add component to frame
-    public static boolean addComponent(ItemStack frameStack, String componentId, int defenseBonus, int durabilityBonus) {
+    /**
+     * Add component to frame with duplicate checking
+     * @return true if added successfully, false if duplicate group or full
+     */
+    public static boolean addComponent(ItemStack frameStack, String componentId, String componentGroup,
+                                       int defenseBonus, int durabilityBonus, double toughnessBonus) {
         NbtCompound nbt = frameStack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
 
         if (!nbt.contains("Components")) {
@@ -86,14 +92,33 @@ public class ArmorFrameItem extends Item {
 
         NbtList components = nbt.getList("Components").orElse(new NbtList());
 
+        // Check if we're at max capacity
         if (components.size() >= 6) {
             return false;
         }
 
+        // Check for duplicate component groups (prevent multiple pauldrons, etc.)
+        Set<String> existingGroups = new HashSet<>();
+        for (int i = 0; i < components.size(); i++) {
+            NbtCompound comp = components.getCompound(i).orElse(new NbtCompound());
+            String group = comp.getString("Group").orElse("");
+            if (!group.isEmpty()) {
+                existingGroups.add(group);
+            }
+        }
+
+        // If this group already exists, prevent adding
+        if (existingGroups.contains(componentGroup)) {
+            return false; // Duplicate group!
+        }
+
+        // Add the new component
         NbtCompound component = new NbtCompound();
         component.putString("Id", componentId);
+        component.putString("Group", componentGroup);
         component.putInt("Defense", defenseBonus);
         component.putInt("Durability", durabilityBonus);
+        component.putDouble("Toughness", toughnessBonus);
 
         components.add(component);
         nbt.put("Components", components);
@@ -102,9 +127,9 @@ public class ArmorFrameItem extends Item {
         return true;
     }
 
-    public static List<ComponentData> getComponents(ItemStack FrameStack) {
+    public static List<ComponentData> getComponents(ItemStack frameStack) {
         List<ComponentData> result = new ArrayList<>();
-        NbtCompound nbt = FrameStack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
+        NbtCompound nbt = frameStack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
 
         if (nbt.contains("Components")) {
             NbtList components = nbt.getList("Components").orElse(new NbtList());
@@ -112,8 +137,10 @@ public class ArmorFrameItem extends Item {
                 NbtCompound component = components.getCompound(i).orElse(new NbtCompound());
                 result.add(new ComponentData(
                         component.getString("Id").orElse(""),
+                        component.getString("Group").orElse(""),
                         component.getInt("Defense").orElse(0),
-                        component.getInt("Durability").orElse(0)
+                        component.getInt("Durability").orElse(0),
+                        component.getDouble("Toughness").orElse(0.0)
                 ));
             }
         }
@@ -141,6 +168,14 @@ public class ArmorFrameItem extends Item {
         int total = BASE_DURABILITY;
         for (ComponentData component : getComponents(frameStack)) {
             total += component.durabilityBonus;
+        }
+        return total;
+    }
+
+    public static double getTotalToughness(ItemStack frameStack) {
+        double total = BASE_TOUGHNESS;
+        for (ComponentData component : getComponents(frameStack)) {
+            total += component.toughnessBonus;
         }
         return total;
     }
@@ -174,5 +209,5 @@ public class ArmorFrameItem extends Item {
         }
     }
 
-    public record ComponentData(String id, int defenseBonus, int durabilityBonus) {}
+    public record ComponentData(String id, String group, int defenseBonus, int durabilityBonus, double toughnessBonus) {}
 }

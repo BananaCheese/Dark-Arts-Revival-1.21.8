@@ -5,18 +5,33 @@ import net.minecraft.item.Item;
 
 public class ArmorComponentItem extends Item {
     private final ComponentType componentType;
+    private final String componentGroup; // For preventing duplicates (e.g., "pauldrons", "base_plate")
     private final int defenseBonus;
     private final int durabilityBonus;
+    private final double toughnessBonus;
 
-    public ArmorComponentItem(Settings settings, ComponentType componentType, int defenseBonus, int durabilityBonus) {
+    public ArmorComponentItem(Settings settings, ComponentType componentType, String componentGroup,
+                              int defenseBonus, int durabilityBonus, double toughnessBonus) {
         super(settings);
         this.componentType = componentType;
+        this.componentGroup = componentGroup;
         this.defenseBonus = defenseBonus;
         this.durabilityBonus = durabilityBonus;
+        this.toughnessBonus = toughnessBonus;
+    }
+
+    // Convenience constructor without toughness (defaults to 0)
+    public ArmorComponentItem(Settings settings, ComponentType componentType, String componentGroup,
+                              int defenseBonus, int durabilityBonus) {
+        this(settings, componentType, componentGroup, defenseBonus, durabilityBonus, 0.0);
     }
 
     public ComponentType getComponentType() {
         return componentType;
+    }
+
+    public String getComponentGroup() {
+        return componentGroup;
     }
 
     public int getDefenseBonus() {
@@ -25,6 +40,10 @@ public class ArmorComponentItem extends Item {
 
     public int getDurabilityBonus() {
         return durabilityBonus;
+    }
+
+    public double getToughnessBonus() {
+        return toughnessBonus;
     }
 
     public enum ComponentType {

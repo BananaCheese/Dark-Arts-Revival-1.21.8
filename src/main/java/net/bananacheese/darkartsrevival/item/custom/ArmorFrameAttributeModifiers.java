@@ -27,6 +27,7 @@ public class ArmorFrameAttributeModifiers {
 
         int totalDefense = ArmorFrameItem.getTotalDefense(stack);
         int totalDurability = ArmorFrameItem.getTotalDurability(stack);
+        double totalToughness = ArmorFrameItem.getTotalToughness(stack);
 
         // Update max damage based on total durability
         stack.set(DataComponentTypes.MAX_DAMAGE, totalDurability);
@@ -53,13 +54,12 @@ public class ArmorFrameAttributeModifiers {
                 modifierSlot
         ));
 
-        // Add armor toughness (scaled from defense) with unique identifier
-        double toughness = totalDefense * 0.2; // 20% of defense as toughness
+        // Add armor toughness with unique identifier
         modifiers.add(new AttributeModifiersComponent.Entry(
                 EntityAttributes.ARMOR_TOUGHNESS,
                 new EntityAttributeModifier(
                         toughnessId,
-                        toughness,
+                        totalToughness,
                         EntityAttributeModifier.Operation.ADD_VALUE
                 ),
                 modifierSlot

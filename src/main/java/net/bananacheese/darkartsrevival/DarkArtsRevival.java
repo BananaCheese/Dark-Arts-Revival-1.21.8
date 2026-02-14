@@ -9,33 +9,40 @@ import net.bananacheese.darkartsrevival.event.PlayerDeathHandler;
 import net.bananacheese.darkartsrevival.item.DAItemGroup;
 import net.bananacheese.darkartsrevival.item.DAItems;
 import net.bananacheese.darkartsrevival.item.custom.ArmorComponentItem;
-import net.bananacheese.darkartsrevival.item.custom.ArmorCoreItem;
+import net.bananacheese.darkartsrevival.item.custom.ArmorFrameItem;
 import net.bananacheese.darkartsrevival.item.custom.SoulSyringe;
 import net.bananacheese.darkartsrevival.recipe.DARecipes;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DarkArtsRevival implements ModInitializer {
-	public static final String MOD_ID = "darkartsrevival";
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+import java.util.List;
 
-	@Override
-	public void onInitialize() {
+public class DarkArtsRevival implements ModInitializer {
+    public static final String MOD_ID = "darkartsrevival";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
+    @Override
+    public void onInitialize() {
+        // CRITICAL FIX: Register components, blocks, and items BEFORE the item group
+        // The item group references these items, so they must exist first
         DAComponents.registerComponents();
-        DAItemGroup.registerItemGroups();
         DABlocks.registerModBlocks();
         DABlockEntities.registerBlockEntities();
         DAItems.registerModItems();
+        DAItemGroup.registerItemGroups();  // Moved AFTER items/blocks registration
+
+        // Register other systems
         ReviveCommand.register();
         AlterTierCommand.register();
         PlayerDeathHandler.register();
         DARecipes.registerRecipes();
 
-        // Register tooltip callback
+        // Register tooltip callback for Soul Syringe
         ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, lines) -> {
             if (stack.getItem() instanceof SoulSyringe) {
                 int fillLevel = SoulSyringe.getFillLevel(stack);
@@ -66,15 +73,39 @@ public class DarkArtsRevival implements ModInitializer {
             }
         });
 
-        // Register tooltip for Armor Cores
+        // Register tooltip for Armor Cores - ENHANCED VERSION
         ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, lines) -> {
-            if (stack.getItem() instanceof ArmorCoreItem coreItem) {
-                lines.add(Text.literal("§7" + coreItem.getCoreType().getDisplayName() + " Core"));
+            if (stack.getItem() instanceof ArmorFrameItem coreItem) {
+                lines.add(Text.literal("§7" + coreItem.getFrameType().getDisplayName() + " Core"));
                 lines.add(Text.literal("§8Place in Gear Forge to customize"));
+
+                // Show total stats
+                int totalDefense = ArmorFrameItem.getTotalDefense(stack);
+                int totalDurability = ArmorFrameItem.getTotalDurability(stack);
+
+                lines.add(Text.literal(""));
+                lines.add(Text.literal("Defense: " + totalDefense).formatted(Formatting.BLUE));
+                lines.add(Text.literal("Durability: " + totalDurability).formatted(Formatting.GREEN));
+
+                // Show attached components
+                List<ArmorFrameItem.ComponentData> components = ArmorFrameItem.getComponents(stack);
+                if (!components.isEmpty()) {
+                    lines.add(Text.literal(""));
+                    lines.add(Text.literal("Attached Components:").formatted(Formatting.GOLD));
+                    for (ArmorFrameItem.ComponentData comp : components) {
+                        String componentName = comp.id().substring(comp.id().lastIndexOf(':') + 1)
+                                .replace('_', ' ');
+                        lines.add(Text.literal("  • " + componentName).formatted(Formatting.GRAY));
+                    }
+                }
+
+                lines.add(Text.literal(""));
+                lines.add(Text.literal(ArmorFrameItem.getComponentCount(stack) + "/6 Component Slots")
+                        .formatted(Formatting.DARK_GRAY));
             }
         });
 
-// Register tooltip for Armor Components
+        // Register tooltip for Armor Components
         ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, lines) -> {
             if (stack.getItem() instanceof ArmorComponentItem component) {
                 lines.add(Text.literal("§9" + component.getComponentType().getDisplayName()));

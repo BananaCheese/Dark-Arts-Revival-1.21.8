@@ -50,10 +50,10 @@ public class GearForgeScreen extends HandledScreen<GearForgeScreenHandler> {
         int panelX = x + 8;
         int panelY = y + 16;
 
-        // Get the core item from the center slot
-        ItemStack coreItem = handler.getInventory().getStack(0);
+        // Get the frame item from the center slot
+        ItemStack frameItem = handler.getInventory().getStack(0);
 
-        if (!coreItem.isEmpty()) {
+        if (!frameItem.isEmpty()) {
             // TODO: Calculate actual stats from item and upgrades
             // For now, display placeholder text
             context.drawText(textRenderer, Text.literal("Stats:"), panelX + 2, panelY + 2, 0x404040, false);
@@ -64,7 +64,7 @@ public class GearForgeScreen extends HandledScreen<GearForgeScreenHandler> {
             context.drawText(textRenderer, Text.literal("+2 Defense"), panelX + 2, panelY + 35, 0x00AA00, false);
             context.drawText(textRenderer, Text.literal("+10 Dura"), panelX + 2, panelY + 45, 0x00AA00, false);
         } else {
-            // No item in core slot
+            // No item in frame slot
             context.drawText(textRenderer, Text.literal("Place gear"), panelX + 2, panelY + 2, 0x808080, false);
             context.drawText(textRenderer, Text.literal("to modify"), panelX + 2, panelY + 12, 0x808080, false);
         }

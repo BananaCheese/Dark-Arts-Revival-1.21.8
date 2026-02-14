@@ -2,6 +2,7 @@ package net.bananacheese.darkartsrevival.item.custom;
 
 import net.minecraft.item.Item;
 
+
 public class ArmorComponentItem extends Item {
     private final ComponentType componentType;
     private final int defenseBonus;
@@ -63,9 +64,9 @@ public class ArmorComponentItem extends Item {
             return compatibility;
         }
 
-        public boolean isCompatibleWith(ArmorCoreItem.ArmorCoreType coreType) {
+        public boolean isCompatibleWith(ArmorFrameItem.ArmorFrameType frameType) {
             if (compatibility.equals("All")) return true;
-            return compatibility.equalsIgnoreCase(coreType.getDisplayName());
+            return compatibility.equalsIgnoreCase(frameType.getDisplayName());
         }
     }
 }

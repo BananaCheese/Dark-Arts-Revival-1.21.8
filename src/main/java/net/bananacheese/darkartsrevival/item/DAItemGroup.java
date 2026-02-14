@@ -31,10 +31,10 @@ public class DAItemGroup {
 
                         entries.add(DAItems.DARK_CRYSTAL);
 
-                        entries.add(DAItems.HELMET_CORE);
-                        entries.add(DAItems.CHESTPLATE_CORE);
-                        entries.add(DAItems.LEGGINGS_CORE);
-                        entries.add(DAItems.BOOTS_CORE);
+                        entries.add(DAItems.HELMET_FRAME);
+                        entries.add(DAItems.CHESTPLATE_FRAME);
+                        entries.add(DAItems.LEGGINGS_FRAME);
+                        entries.add(DAItems.BOOTS_FRAME);
 
                         entries.add(DAItems.IRON_PAULDRONS);
                         entries.add(DAItems.IRON_FAULD);

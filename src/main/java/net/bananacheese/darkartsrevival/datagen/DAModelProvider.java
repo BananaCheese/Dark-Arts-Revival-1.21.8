@@ -31,10 +31,10 @@ public class DAModelProvider extends FabricModelProvider {
 
         itemModelGenerator.register(DAItems.GEAR_FORGE_HAMMER, Models.HANDHELD);
 
-        itemModelGenerator.register(DAItems.HELMET_CORE, Models.HANDHELD);
-        itemModelGenerator.register(DAItems.CHESTPLATE_CORE, Models.HANDHELD);
-        itemModelGenerator.register(DAItems.LEGGINGS_CORE, Models.HANDHELD);
-        itemModelGenerator.register(DAItems.BOOTS_CORE, Models.HANDHELD);
+        itemModelGenerator.register(DAItems.HELMET_FRAME, Models.HANDHELD);
+        itemModelGenerator.register(DAItems.CHESTPLATE_FRAME, Models.HANDHELD);
+        itemModelGenerator.register(DAItems.LEGGINGS_FRAME, Models.HANDHELD);
+        itemModelGenerator.register(DAItems.BOOTS_FRAME, Models.HANDHELD);
 
         itemModelGenerator.register(DAItems.IRON_PAULDRONS, Models.HANDHELD);
         itemModelGenerator.register(DAItems.IRON_FAULD, Models.HANDHELD);

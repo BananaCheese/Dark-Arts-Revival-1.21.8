@@ -2,8 +2,8 @@
 	"schemaVersion": 1,
 	"id": "darkartsrevival",
 	"version": "${version}",
-	"name": "Dark Arts Revival",
-	"description": "Revive Your Friends in a Hardcore world.",
+	"name": "Dark Arts",
+	"description": "Im doing to much again...",
 	"authors": [
 		"BananaCheese"
 	],
@@ -24,10 +24,11 @@
         ]
 	},
 	"mixins": [
-		"darkartsrevival.mixins.json"
+		"darkartsrevival.mixins.json",
+		"darkartsrevival.client.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.17.2",
+		"fabricloader": ">=0.18.4",
 		"minecraft": "~1.21.8",
 		"java": ">=21",
 		"fabric-api": "*",

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "darkartsrevival:item/armor/generated/chestplate_frame_steel_reinforcement"
+  }
+}

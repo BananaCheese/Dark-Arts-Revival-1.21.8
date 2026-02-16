@@ -1,0 +1,20 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "darkartsrevival:components",
+    "scale": 1.0,
+    "entries": [
+      {
+        "threshold": 0.1171,
+        "model": {
+          "type": "minecraft:model",
+          "model": "darkartsrevival:item/boots_frame_steel_reinforcement"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "darkartsrevival:item/boots_frame_base"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:item/handheld",
+  "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "darkartsrevival:item/iron_pauldrons"
+    "layer0": "darkartsrevival:item/armor/components/item/iron_pauldrons"
   }
 }

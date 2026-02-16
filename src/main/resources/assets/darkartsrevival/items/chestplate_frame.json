@@ -1,0 +1,118 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "darkartsrevival:components",
+    "scale": 1.0,
+    "entries": [
+      {
+        "threshold": 0.1171,
+        "model": {
+          "type": "minecraft:model",
+          "model": "darkartsrevival:item/chestplate_frame_steel_reinforcement"
+        }
+      },
+      {
+        "threshold": 0.1679,
+        "model": {
+          "type": "minecraft:model",
+          "model": "darkartsrevival:item/chestplate_frame_iron_fauld_iron_gorget_iron_pauldrons"
+        }
+      },
+      {
+        "threshold": 0.2423,
+        "model": {
+          "type": "minecraft:model",
+          "model": "darkartsrevival:item/chestplate_frame_iron_fauld_iron_pauldrons_steel_reinforcement"
+        }
+      },
+      {
+        "threshold": 0.2672,
+        "model": {
+          "type": "minecraft:model",
+          "model": "darkartsrevival:item/chestplate_frame_iron_gorget_iron_pauldrons"
+        }
+      },
+      {
+        "threshold": 0.3311,
+        "model": {
+          "type": "minecraft:model",
+          "model": "darkartsrevival:item/chestplate_frame_iron_gorget_iron_pauldrons_steel_reinforcement"
+        }
+      },
+      {
+        "threshold": 0.3384,
+        "model": {
+          "type": "minecraft:model",
+          "model": "darkartsrevival:item/chestplate_frame_iron_fauld_iron_pauldrons"
+        }
+      },
+      {
+        "threshold": 0.3693,
+        "model": {
+          "type": "minecraft:model",
+          "model": "darkartsrevival:item/chestplate_frame_iron_fauld_iron_gorget_steel_reinforcement"
+        }
+      },
+      {
+        "threshold": 0.4034,
+        "model": {
+          "type": "minecraft:model",
+          "model": "darkartsrevival:item/chestplate_frame_iron_fauld_iron_gorget_iron_pauldrons_steel_reinforcement"
+        }
+      },
+      {
+        "threshold": 0.4185,
+        "model": {
+          "type": "minecraft:model",
+          "model": "darkartsrevival:item/chestplate_frame_iron_pauldrons"
+        }
+      },
+      {
+        "threshold": 0.5652,
+        "model": {
+          "type": "minecraft:model",
+          "model": "darkartsrevival:item/chestplate_frame_iron_fauld_steel_reinforcement"
+        }
+      },
+      {
+        "threshold": 0.6851,
+        "model": {
+          "type": "minecraft:model",
+          "model": "darkartsrevival:item/chestplate_frame_iron_gorget"
+        }
+      },
+      {
+        "threshold": 0.7349,
+        "model": {
+          "type": "minecraft:model",
+          "model": "darkartsrevival:item/chestplate_frame_iron_fauld"
+        }
+      },
+      {
+        "threshold": 0.7806,
+        "model": {
+          "type": "minecraft:model",
+          "model": "darkartsrevival:item/chestplate_frame_iron_fauld_iron_gorget"
+        }
+      },
+      {
+        "threshold": 0.9176,
+        "model": {
+          "type": "minecraft:model",
+          "model": "darkartsrevival:item/chestplate_frame_iron_pauldrons_steel_reinforcement"
+        }
+      },
+      {
+        "threshold": 0.954,
+        "model": {
+          "type": "minecraft:model",
+          "model": "darkartsrevival:item/chestplate_frame_iron_gorget_steel_reinforcement"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "darkartsrevival:item/chestplate_frame_base"
+    }
+  }
+}

@@ -41,7 +41,7 @@ public class DARitualRecipeProvider extends FabricRecipeProvider {
 
                 // Example: Dark Ritual (Tier 4)
                 // Complex ritual requiring multiple items
-                createRitualRecipe(recipeExporter, "nether_star_creation",
+                createRitualRecipe(recipeExporter, "dark_crystal_creation",
                         4, // Min tier
                         Items.CRYING_OBSIDIAN, // Altar item
                         0, // Full water

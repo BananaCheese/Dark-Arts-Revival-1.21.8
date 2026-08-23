@@ -12,6 +12,8 @@ import net.bananacheese.darkartsrevival.item.custom.ArmorComponentItem;
 import net.bananacheese.darkartsrevival.item.custom.ArmorFrameItem;
 import net.bananacheese.darkartsrevival.item.custom.SoulSyringe;
 import net.bananacheese.darkartsrevival.recipe.DARecipes;
+import net.bananacheese.darkartsrevival.world.dimension.LushLandsDimension;
+import net.bananacheese.darkartsrevival.world.dimension.LushLandsTeleporter;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
@@ -41,6 +43,10 @@ public class DarkArtsRevival implements ModInitializer {
         AlterTierCommand.register();
         PlayerDeathHandler.register();
         DARecipes.registerRecipes();
+
+        // Register Dimension Stuff
+        LushLandsDimension.register();
+        LushLandsTeleporter.register();
 
         // Register tooltip callback for Soul Syringe
         ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, lines) -> {

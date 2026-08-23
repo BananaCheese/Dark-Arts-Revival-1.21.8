@@ -7,8 +7,7 @@
 	"authors": [
 		"BananaCheese"
 	],
-	"contact": {
-	},
+	"contact": {},
 	"license": "MIT",
 	"icon": "assets/darkartsrevival/icon.png",
 	"environment": "*",
@@ -19,23 +18,27 @@
 		"fabric-datagen": [
 			"net.bananacheese.darkartsrevival.DarkArtsRevivalDataGenerator"
 		],
-        "client": [
-            "net.bananacheese.darkartsrevival.DarkArtsRevivalClient"
-        ]
+		"client": [
+			"net.bananacheese.darkartsrevival.DarkArtsRevivalClient"
+		]
 	},
 	"mixins": [
 		"darkartsrevival.mixins.json",
 		"darkartsrevival.client.mixins.json"
 	],
+	"custom": {
+		"cardinal-components": [
+			"darkartsrevival:return_pos"
+		]
+	},
 	"depends": {
 		"fabricloader": ">=0.18.4",
 		"minecraft": "~1.21.8",
 		"java": ">=21",
 		"fabric-api": "*",
-        "fusion": ">=1.0.0"
-
+		"fusion": ">=1.0.0"
 	},
 	"suggests": {
-        "fusion": ">=1.0.0"
+		"fusion": ">=1.0.0"
 	}
 }

@@ -44,7 +44,7 @@ public class DARitualRecipeProvider extends FabricRecipeProvider {
                 createRitualRecipe(recipeExporter, "dark_crystal_creation",
                         4, // Min tier
                         Items.CRYING_OBSIDIAN, // Altar item
-                        0, // Full water
+                        0, // No water
                         List.of(
                                 Ingredient.ofItems(Items.REDSTONE_BLOCK),
                                 Ingredient.ofItems(Items.REDSTONE_BLOCK),
@@ -74,15 +74,6 @@ public class DARitualRecipeProvider extends FabricRecipeProvider {
                         ));
             }
         };
-    }
-
-    /**
-     * Helper method to create ritual recipes
-     */
-    private void createRitualRecipe(RecipeExporter exporter, String name,
-                                    int minTier, ItemConvertible altarItem, int fluidAmount,
-                                    List<Ingredient> pedestalItems, ItemStack result) {
-        createRitualRecipe(exporter, name, minTier, altarItem, fluidAmount, pedestalItems, result, "");
     }
 
     /**
